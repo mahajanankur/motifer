@@ -12,12 +12,11 @@ Motifer uses a number of open source projects to work properly:
 
 * [Winston](https://github.com/winstonjs/winston)
 
-And of course Motifer itself is open source with a public [repository](https://github.com/mahajanankur/motifer)
- on GitHub.
+And of course Motifer itself is open source with a public [repository](https://github.com/mahajanankur/motifer) on GitHub.
 
 ### Installation
 
-Motider requires [Node.js](https://nodejs.org/) v4+ to run.
+Motider requires [Node.js](https://nodejs.org/) to run.
 
 Install the dependencies and devDependencies and start the server.
 
@@ -26,8 +25,8 @@ $ npm i motifer
 ```
 
 ## Usage
-The recommended way to use `motifer` is to create a logger. The
-simplest way to do this is using `LoggerBuilder`:
+The recommended way to use `motifer` is to create a logger. The simplest way to do this is using `LoggerBuilder`.
+
 Initialize the LoggerFactory object once and use it in different js files.
 ``` js
 const { LoggerFactory } = require('motifer');
