@@ -1,7 +1,5 @@
 # Motifer
 
-[![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
-
 Motifer is a generic logs pattern manager build on top of Winston. It covers multiple usecases as follows.
 
   - Log pattern validation.
