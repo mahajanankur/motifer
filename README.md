@@ -1,5 +1,7 @@
 # Motifer
 
+[![Version](https://img.shields.io/npm/v/npm-link-up.svg?colorB=green)](https://www.npmjs.com/package/motifer)
+
 Motifer is a generic logs pattern manager build on top of Winston. It covers multiple usecases as follows.
 
   - Log pattern validation.
