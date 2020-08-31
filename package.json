@@ -1,14 +1,14 @@
 {
-  "name": "motif11",
+  "name": "motifer",
   "version": "1.0.0",
-  "description": "A generic logging pattern manager.",
+  "description": "A generic logging pattern manager on winston.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:mahajanankur/motif.git"
+    "url": "git@github.com:mahajanankur/motifer.git"
   },
   "author": "Ankur Mahajan",
   "license": "ISC",
