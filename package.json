@@ -1,6 +1,6 @@
 {
   "name": "motifer",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A generic logging pattern manager on winston.",
   "main": "index.js",
   "scripts": {
@@ -11,7 +11,7 @@
     "url": "git@github.com:mahajanankur/motifer.git"
   },
   "author": "Ankur Mahajan",
-  "license": "APACHE 2.0",
+  "license": "Apache 2.0",
   "dependencies": {
     "winston": "^3.3.3"
   }
