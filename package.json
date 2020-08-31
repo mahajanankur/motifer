@@ -1,7 +1,7 @@
 {
   "name": "motif",
   "version": "1.0.0",
-  "description": "Generic logger for package.",
+  "description": "A generic logging pattern manager.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
