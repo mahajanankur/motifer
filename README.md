@@ -25,7 +25,7 @@ $ npm i motifer
 ```
 
 ## Usage
-The recommended way to use `motifer` is to create a logger. The simplest way to do this is using `LoggerBuilder`.
+The recommended way to use `motifer` is to create a logger. The simplest way to do this is using `LoggerFactory`.
 
 Initialize the LoggerFactory object once and use it in different js files.
 ``` js
@@ -45,6 +45,11 @@ const printLogs = args => {
             .build();
     });
 }
+```
+``` log
+2020-08-31T09:45:53.717Z [filename.js] [APPNAME] INFO: The sample info message
+2020-08-31T09:45:53.720Z [filename.js] [APPNAME] DEBUG: The sample info message | {"key1":"value1","key2":"value2"}
+2020-08-31T09:45:53.720Z [filename.js] [APPNAME] ERROR: The sample error message | {"key1":"value1","key2":"value2"}
 ```
 
 ### LoggerFactory
