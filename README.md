@@ -35,6 +35,8 @@ const { LoggerFactory } = require('motifer');
 
 exports.logger = new LoggerFactory("app_name", "logfile.log", "log_level");
 ```
+Supported log levels are **info, debug, warn and error**.
+
 ``` js
 const { logger } = require('./index');
 logger.setFilename(__filename);
