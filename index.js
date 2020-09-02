@@ -1,32 +1,17 @@
 const { winstonLoggerClient } = require('./winstonClient');
 
 let logger = null;
+let serviceName = null;
 
-let Logger = function (level, label, message, args, filename) {
-    // console.log(`Logger: object`, logger);
+let Logger = function (level, message, args, filename) {
     this.level = level;
-    this.label = label;
+    this.label = serviceName;
     this.message = message;
     this.args = args;
     this.filename = filename;
-    // TODO FACTORY Pattern
     if (logger) {
-        switch (level) {
-            case "info":
-                logger.info(this);
-                break;
-            case "error":
-                logger.error(this);
-                break;
-            case "warn":
-                logger.warn(this);
-                break;
-            default:
-                logger.debug(this);
-                break;
-        }
+        logger.log(this);
     } else {
-        // console.log(`Logger:NullPointerException: Not able to initialize the logger object.`);
         throw new Error("Not able to initialize the logger object.");
     }
 
@@ -36,38 +21,41 @@ let Logger = function (level, label, message, args, filename) {
 * @author Ankur Mahajan
 * @class LoggerBuilder
 * @summary This is a LoggerBuilder, builder of logger object.
-* @function setLevel @param {string} level log level i.e INFO, ERROR, WARN and DEBUG.
+* @param {string} filename filename with path.
 */
-const LoggerBuilder = function () {
-    let level = null;
-    let service = null;
-    let message = null;
-    let args = null;
-    let filename = null;
+const LoggerBuilder = function (filename) {
+    let level;
+    let message;
+    let args;
     return {
-        setLevel: function (leveldto) {
-            // Validation
-            level = leveldto;
+        info: function (msg) {
+            this.level = "info";
+            this.message = msg;
             return this;
         },
-        setService: function (servicedto) {
-            service = servicedto;
+        debug: function (msg) {
+            this.level = "debug";
+            this.message = msg;
             return this;
         },
-        setMessage: function (messagedto) {
-            message = messagedto;
+        error: function (msg) {
+            this.level = "error";
+            this.message = msg;
             return this;
         },
-        setArguments: function (arguments) {
-            args = arguments;
+        warn: function (msg) {
+            this.level = "warn";
+            this.message = msg;
             return this;
         },
-        setFilename: function (filenamedto) {
-            filename = filenamedto;
+        arguments: function (arguments) {
+            this.args = arguments;
             return this;
         },
         build: function () {
-            return new Logger(level, service, message, args, filename);
+            let customLogger = new Logger(this.level, this.message, this.args, filename);
+            this.arguments(null);
+            return customLogger;
         }
     };
 };
@@ -82,14 +70,17 @@ const LoggerBuilder = function () {
  * @returns LoggerBuilder
  */
 exports.LoggerFactory = function (service, path, level) {
-    // console.log(`LoggerFactory`, service, path);
-    this.service = service;
+    serviceName = service;
     this.path = path;
-    // this.level = level;
+    this.level = level;
     // if (!logger) {
     // initialize the winson logger.
     logger = winstonLoggerClient(path, level);
     // }
-    // console.log(`LoggerFactory: Winston Logger Object`, logger);
-    return new LoggerBuilder().setService(service);
+    return {
+        getLogger: (filename) => {
+            return new LoggerBuilder(filename);
+        }
+    }
+    // return new LoggerBuilder();
 }

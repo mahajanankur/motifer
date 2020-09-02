@@ -33,19 +33,18 @@ Initialize the LoggerFactory object once and use it in different js files.
 ``` js
 const { LoggerFactory } = require('motifer');
 
-exports.logger = new LoggerFactory("app_name", "logfile.log", "log_level");
+exports.Logger = new LoggerFactory("app_name", "logfile.log", "log_level");
 ```
 Supported log levels are **info, debug, warn and error**.
 
 ``` js
-const { logger } = require('./index');
-logger.setFilename(__filename);
+const { Logger } = require('./index');
+let logger = Logger.getLogger(__filename);
 
 const printLogs = args => {
         logger
-            .setLevel("info")
-            .setMessage(`The message to print ${args.subargs}`)
-            .setArguments(args)
+            .info(`The message to print ${args.subargs}`)
+            .arguments(args)
             .build();
     });
 }
