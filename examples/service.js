@@ -21,15 +21,15 @@ const otherFunction = () => {
 
 printFirstNames([
     {
+        first: "John",
+        last: "Doe"
+    },
+    {
+        first: "Doe",
+        last: "John"
+    },
+    {
         first: "Ankur",
         last: "Mahajan"
-    },
-    {
-        first: "Mohan",
-        last: "Rana"
-    },
-    {
-        first: "Raj",
-        last: "Kumar"
     }
 ]);
