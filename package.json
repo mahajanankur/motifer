@@ -1,15 +1,21 @@
 {
   "name": "motifer",
-  "version": "1.0.5",
-  "description": "A generic logging pattern manager on winston.",
+  "version": "1.0.6",
+  "description": "Generic javascript log pattern manager on winston.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node examples/service.js"
   },
   "repository": {
     "type": "git",
     "url": "git@github.com:mahajanankur/motifer.git"
   },
+  "keywords": [
+    "logger",
+    "winston",
+    "log pattern",
+    "javascript logger"
+  ],
   "author": "Ankur Mahajan",
   "license": "Apache 2.0",
   "dependencies": {
