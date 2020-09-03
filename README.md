@@ -46,13 +46,33 @@ const printLogs = args => {
             .info(`The message to print ${args.subargs}`)
             .arguments(args)
             .build();
-    });
 }
 ```
 ``` log
-2020-08-31T09:45:53.717Z [filename.js] [APPNAME] INFO: The sample info message
-2020-08-31T09:45:53.720Z [filename.js] [APPNAME] DEBUG: The sample info message | {"key1":"value1","key2":"value2"}
-2020-08-31T09:45:53.720Z [filename.js] [APPNAME] ERROR: The sample error message | {"key1":"value1","key2":"value2"}
+2020-08-31T09:45:53.717Z [filename.js] [APPNAME] [INFO] [null] The sample info message.
+2020-08-31T09:45:53.720Z [filename.js] [APPNAME] [DEBUG] [{"key1":"value1","key2":"value2"}] The sample debug message.
+2020-08-31T09:45:53.720Z [filename.js] [APPNAME] [ERROR] [{"key1":"value1","key2":"value2"}] Error: Sample Error Message
+    at getTerminatedEmployees (/motifer/examples/service.js:10:20)
+    at Object.<anonymous> (motifer/examples/service.js:23:1)
+    at Module._compile (internal/modules/cjs/loader.js:778:30)
+    at Object.Module._extensions..js (internal/modules/cjs/loader.js:789:10)
+    at Module.load (internal/modules/cjs/loader.js:653:32)
+    at tryModuleLoad (internal/modules/cjs/loader.js:593:12)
+    at Function.Module._load (internal/modules/cjs/loader.js:585:3)
+    at Function.Module.runMain (internal/modules/cjs/loader.js:831:12)
+    at startup (internal/bootstrap/node.js:283:19)
+    at bootstrapNodeJSCore (internal/bootstrap/node.js:623:3)
+2020-08-31T09:45:53.720Z [filename.js] [APPNAME] [ERROR] [null] Error: Sample Error Message
+    at getTerminatedEmployees (/motifer/examples/service.js:10:20)
+    at Object.<anonymous> (motifer/examples/service.js:23:1)
+    at Module._compile (internal/modules/cjs/loader.js:778:30)
+    at Object.Module._extensions..js (internal/modules/cjs/loader.js:789:10)
+    at Module.load (internal/modules/cjs/loader.js:653:32)
+    at tryModuleLoad (internal/modules/cjs/loader.js:593:12)
+    at Function.Module._load (internal/modules/cjs/loader.js:585:3)
+    at Function.Module.runMain (internal/modules/cjs/loader.js:831:12)
+    at startup (internal/bootstrap/node.js:283:19)
+    at bootstrapNodeJSCore (internal/bootstrap/node.js:623:3)
 ```
 
 ### LoggerFactory

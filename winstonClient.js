@@ -4,9 +4,9 @@ const { combine, timestamp, label, printf, align, colorize } = format;
 
 const customFormat = printf(info => {
     if (info.args) {
-        return `${info.timestamp} [${info.filename}] [${info.label.toUpperCase()}] ${info.level.toUpperCase()}: ${info.message} | ${JSON.stringify(info.args)}`;
+        return `${info.timestamp} [${info.filename}] [${info.label.toUpperCase()}] [${info.level.toUpperCase()}] [${JSON.stringify(info.args)}] ${info.message}`;
     } else {
-        return `${info.timestamp} [${info.filename}] [${info.label.toUpperCase()}] ${info.level.toUpperCase()}: ${info.message}`;
+        return `${info.timestamp} [${info.filename}] [${info.label.toUpperCase()}] [${info.level.toUpperCase()}] [null] ${info.message}`;
     }
 });
 
