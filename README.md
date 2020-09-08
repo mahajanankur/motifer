@@ -33,7 +33,7 @@ Initialize the LoggerFactory object once and use it in different js files.
 ``` js
 const { LoggerFactory } = require('motifer');
 
-exports.Logger = new LoggerFactory("app_name", "logfile.log", "log_level");
+exports.Logger = new LoggerFactory("app_name", "log_level", "logfile.log");
 ```
 Supported log levels are **info, debug, warn and error**.
 
@@ -79,12 +79,11 @@ const printLogs = args => {
 
 The **object** has three parameter.
 
-| Param | Description |Mandatory
-| ------ | ------ | ------ |
-| service | Application or service name. | Yes |
-| path | Path of logfile with filename. | Yes |
-| level | Default log level for the application. | Yes |
-
+| Param | Description |Mandatory |Default |Comments|
+| ------ | ------ | ------ | ------ |
+| service | Application or service name. | Yes | NA| This is a mandatory param.|
+| level | Log level for the application. | No | info| Info is default log level.|
+| path | Path of logfile with filename. | No | null| If not supplied file appender will not be attached.|
 
 License
 ----

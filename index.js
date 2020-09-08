@@ -69,16 +69,17 @@ const LoggerBuilder = function (filename) {
  * @param {string} level log level i.e info, error, warn and debug.
  * @returns LoggerBuilder
  */
-exports.LoggerFactory = function (service, path, level) {
+exports.LoggerFactory = function (service, level, path) {
     serviceName = service;
     this.path = path;
     this.level = level;
     // if (!logger) {
     // initialize the winson logger.
-    logger = winstonLoggerClient(path, level);
+    logger = winstonLoggerClient(level, path);
     // }
     return {
         getLogger: (filename) => {
+            filename = filename.replace(/^.*[\\\/]/, '');
             return new LoggerBuilder(filename);
         }
     }
