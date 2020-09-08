@@ -80,7 +80,7 @@ const printLogs = args => {
 The **object** has three parameter.
 
 | Param | Description |Mandatory |Default |Comments|
-| ------ | ------ | ------ | ------ |
+| ------ | ------ | ------ | ------ | ------ |
 | service | Application or service name. | Yes | NA| This is a mandatory param.|
 | level | Log level for the application. | No | info| Info is default log level.|
 | path | Path of logfile with filename. | No | null| If not supplied file appender will not be attached.|
