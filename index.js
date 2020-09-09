@@ -122,7 +122,7 @@ exports.ExpressLoggerFactory = function (service, level, express = null, path) {
     return {
         getLogger: (filename) => {
             filename = filename.replace(/^.*[\\\/]/, '');
-            return new LoggerBuilder(filename);
+            return new LoggerBuilder(filename, true);
         }
     }
     // return new LoggerBuilder();
@@ -133,10 +133,11 @@ exports.ExpressLoggerFactory = function (service, level, express = null, path) {
  * @class Logger
  * @summary This is a actual logger object that prints the logs in the console and file appenders.
  * @param {string} filename Filename of the javascript file.
+ * @param {boolean} isExpress Boolean if using this with express js, default is true.
  * @returns {LoggerBuilder} LoggerBuilder.
  */
-exports.Logger = function (filename) {
+exports.Logger = function (filename, isExpress) {
     filename = filename.replace(/^.*[\\\/]/, '');
-    return new LoggerBuilder(filename, expressApp ? true : false);
+    return new LoggerBuilder(filename, !isExpress ? true : false);
 }
 
