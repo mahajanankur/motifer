@@ -1,15 +1,17 @@
 // const winston = require('winston');
+const httpContext = require('express-http-context');
 const { createLogger, format, transports, level } = require('winston');
 const { combine, timestamp, label, printf, align, colorize } = format;
 const supportedLevels = ["debug", "info", "warn", "error"];
 const defaultLevel = "info";
 
 const customFormat = printf(info => {
-    if (info.args) {
-        return `${info.timestamp} [${info.filename}] [${info.label.toUpperCase()}] [${info.level.toUpperCase()}] [${JSON.stringify(info.args)}] ${info.message}`;
-    } else {
-        return `${info.timestamp} [${info.filename}] [${info.label.toUpperCase()}] [${info.level.toUpperCase()}] [null] ${info.message}`;
-    }
+    let requestId = httpContext.get('requestId');
+    // if (info.args) {
+    return `${info.timestamp} [${requestId}] [${info.filename}] [${info.functionName ? info.functionName : null}] [${info.label.toUpperCase()}] [${info.level.toUpperCase()}] [${info.args ? JSON.stringify(info.args) : null}] ${info.message}`;
+    // } else {
+    // return `${info.timestamp} [${info.filename}] [${info.functionName ? info.functionName : null}] [${info.label.toUpperCase()}] [${info.level.toUpperCase()}] [null] ${info.message}`;
+    // }
 });
 
 exports.winstonLoggerClient = (level, path) => {
