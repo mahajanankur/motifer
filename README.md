@@ -123,7 +123,7 @@ router.get("/status", async (req, res, next) => {
 
 module.exports = router;
 ```
-Request id is of `UUID V4` type.
+> Request id is of `UUID V4` type.
 
 ``` log
 2020-08-31T09:45:53.717Z [requestId] [filename.js] [functionName] [APPNAME] [INFO] [null] The sample info message.
