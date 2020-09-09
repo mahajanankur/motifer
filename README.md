@@ -1,6 +1,8 @@
 # Motifer
 
-[![Version](https://img.shields.io/npm/v/npm-link-up.svg?colorB=green)](https://www.npmjs.com/package/motifer)
+[![Version npm](https://img.shields.io/npm/v/motifer.svg?style=flat-square)](https://www.npmjs.com/package/motifer)
+
+[![NPM](https://nodei.co/npm/motifer.png?downloads=true&downloadRank=true)](https://nodei.co/npm/motifer/)
 
 Motifer is a generic logs pattern manager build on top of Winston. It covers multiple usecases as follows.
 
