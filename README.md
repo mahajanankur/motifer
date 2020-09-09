@@ -83,6 +83,7 @@ const bodyParser = require("body-parser");
 const { ExpressLoggerFactory } = require("motifer");
 // Change this Object according to your route.
 const route = require("./src/controllers/route");
+const port = 8080;
 
 //Configure the server
 const server = express();
