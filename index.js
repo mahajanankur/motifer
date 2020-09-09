@@ -4,14 +4,16 @@ const uuid = require('uuid');
 
 let logger = null;
 let serviceName = null;
+let expressApp = null;
 
-let Logger = function (level, message, args, filename, functionName) {
+let LoggerObject = function (level, message, args, filename, functionName, isExpress) {
     this.level = level;
     this.label = serviceName;
     this.message = message;
     this.args = args;
     this.filename = filename;
     this.functionName = functionName;
+    this.isExpress = isExpress;
     if (logger) {
         logger.log(this);
     } else {
@@ -26,7 +28,7 @@ let Logger = function (level, message, args, filename, functionName) {
 * @summary This is a LoggerBuilder, builder of logger object.
 * @param {string} filename filename with path.
 */
-const LoggerBuilder = function (filename) {
+const LoggerBuilder = function (filename, isExpress) {
     let level;
     let message;
     let args;
@@ -57,7 +59,7 @@ const LoggerBuilder = function (filename) {
         },
         build: function () {
             let functionName = this.build.caller.name;
-            let customLogger = new Logger(this.level, this.message, this.args, filename, functionName);
+            let customLogger = new LoggerObject(this.level, this.message, this.args, filename, functionName, isExpress);
             this.arguments(null);
             return customLogger;
         }
@@ -68,10 +70,10 @@ const LoggerBuilder = function (filename) {
  * @author Ankur Mahajan
  * @class LoggerFactory
  * @summary This is a LoggerFactory, an entry point to the logger module.
- * @param {string} service microservice name
+ * @param {string} service service name.
  * @param {string} level log level i.e info, error, warn and debug.
- * @param {string} path logfile name with path
- * @returns {LoggerBuilder} return.getLogger
+ * @param {string} path logfile name with path.
+ * @returns {LoggerBuilder} LoggerBuilder 
  */
 exports.LoggerFactory = function (service, level, path) {
     serviceName = service;
@@ -92,17 +94,19 @@ exports.LoggerFactory = function (service, level, path) {
 
 /**
  * @author Ankur Mahajan
- * @class LoggerFactory
- * @summary This is a LoggerFactory, an entry point to the logger module.
- * @param {string} service microservice name
+ * @class ExpressLoggerFactory
+ * @summary This is an ExpressLoggerFactory, configuration point for Motifer's express logger.
+ * @param {string} service service name
  * @param {string} level log level i.e info, error, warn and debug.
- * @param {string} path logfile name with path
- * @returns {LoggerBuilder} return.getLogger
+ * @param {Object} express instance of express server.
+ * @param {string} path logfile name with path.
+ * @returns {LoggerBuilder} LoggerBuilder
  */
-exports.ExpressLoggerFactory = function (service, level, path, express = null) {
+exports.ExpressLoggerFactory = function (service, level, express = null, path) {
     serviceName = service;
     this.path = path;
     this.level = level;
+    expressApp = express;
     if (express) {
         express.use(httpContext.middleware);
         // Run the context for each request. Assign a unique identifier to each request
@@ -123,3 +127,16 @@ exports.ExpressLoggerFactory = function (service, level, path, express = null) {
     }
     // return new LoggerBuilder();
 }
+
+/**
+ * @author Ankur Mahajan
+ * @class Logger
+ * @summary This is a actual logger object that prints the logs in the console and file appenders.
+ * @param {string} filename Filename of the javascript file.
+ * @returns {LoggerBuilder} LoggerBuilder.
+ */
+exports.Logger = function (filename) {
+    filename = filename.replace(/^.*[\\\/]/, '');
+    return new LoggerBuilder(filename, expressApp ? true : false);
+}
+

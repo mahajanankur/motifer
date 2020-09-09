@@ -1,6 +1,8 @@
 const { Logger } = require('./index');
 const logger = Logger.getLogger(__filename);
-// const logger = Logger.getLogger("service.js");
+// require('./index');
+// const { Logger } = require('../index');
+// const logger = Logger(__filename);
 
 const getTerminatedEmployees = employees => {
     employees.forEach(element => {

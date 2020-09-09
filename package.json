@@ -1,7 +1,7 @@
 {
   "name": "motifer",
-  "version": "1.1.0",
-  "description": "Generic logs pattern manager build on top of winston.",
+  "version": "1.1.1",
+  "description": "Generic logs pattern manager for express, build on top of winston.",
   "main": "index.js",
   "scripts": {
     "test": "node examples/service.js"
@@ -13,8 +13,9 @@
   "keywords": [
     "logger",
     "winston",
-    "log patterns",
-    "log design"
+    "log pattern",
+    "express logger",
+    "express"
   ],
   "author": "Ankur Mahajan",
   "license": "Apache 2.0",
