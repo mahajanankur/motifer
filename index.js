@@ -1,18 +1,22 @@
 const { winstonLoggerClient } = require('./winstonClient');
 const httpContext = require('express-http-context');
 const uuid = require('uuid');
+const morgan = require('morgan');
+const morganFormat = "combined";
+const apiLogLevel = "INFO";
+const IS_EXPRESS = true;
 
 let logger = null;
 let serviceName = null;
 let expressApp = null;
 
-let LoggerObject = function (level, message, args, filename, functionName, isExpress) {
+let LoggerObject = function (level, message, args, filename, isExpress) {
     this.level = level;
     this.label = serviceName;
     this.message = message;
     this.args = args;
     this.filename = filename;
-    this.functionName = functionName;
+    // this.functionName = functionName;
     this.isExpress = isExpress;
     if (logger) {
         logger.log(this);
@@ -58,8 +62,10 @@ const LoggerBuilder = function (filename, isExpress) {
             return this;
         },
         build: function () {
-            let functionName = this.build.caller.name;
-            let customLogger = new LoggerObject(this.level, this.message, this.args, filename, functionName, isExpress);
+            // TODO - Find the efficient approach - This is not working for ES6.
+            // let functionName = this.build.caller.name;
+            // let customLogger = new LoggerObject(this.level, this.message, this.args, filename, functionName, isExpress);
+            let customLogger = new LoggerObject(this.level, this.message, this.args, filename, isExpress);
             this.arguments(null);
             return customLogger;
         }
@@ -111,9 +117,21 @@ exports.ExpressLoggerFactory = function (service, level, express = null, path) {
         express.use(httpContext.middleware);
         // Run the context for each request. Assign a unique identifier to each request
         express.use((req, res, next) => {
-            httpContext.set('requestId', uuid.v4());
+            let requestId = uuid.v4();
+            httpContext.set('requestId', requestId);
+            req.id = requestId;
+            // Request Logging
+            let dto = {
+                message: `${new Date().toISOString()} [request] [${requestId}] [${serviceName.toUpperCase()}] [${apiLogLevel}] [${req.method}] [${req.ip}] [${req.originalUrl}] [${req.body ? JSON.stringify(req.body) : null}]`,
+                api: true
+            };
+            logger.info(dto);
             next();
         });
+        // Morgan to track the response.
+        // express.use(morgan(':date[iso] :id :http-version :method :referrer :remote-addr :remote-user :req[Auth] :url :status :res[content-length] - :response-time ms :user-agent'));
+        express.use(morgan(`:date[iso] [response] [:id] [${serviceName.toUpperCase()}] [${apiLogLevel}] [:method] [:remote-addr] [:url] [:status] [:res[content-length]] [:response-time ms] [:user-agent]`, { "stream": new LoggerStream() }));
+        // express.use(morgan(morganFormat));
     }
     // if (!logger) {
     // initialize the winson logger.
@@ -138,6 +156,22 @@ exports.ExpressLoggerFactory = function (service, level, express = null, path) {
  */
 exports.Logger = function (filename, isExpress) {
     filename = filename.replace(/^.*[\\\/]/, '');
-    return new LoggerBuilder(filename, !isExpress ? true : false);
+    return new LoggerBuilder(filename, (isExpress != undefined && typeof isExpress === "boolean") ? isExpress : IS_EXPRESS);
 }
 
+// Custom request Id token for Morgan.
+morgan.token('id', function getId(req) {
+    return req.id
+});
+
+class LoggerStream {
+
+    write(message) {
+        let dto = {
+            message,
+            api: true
+        };
+        logger.info(dto);
+        // new LoggerObject("info", message);
+    }
+}

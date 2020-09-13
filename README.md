@@ -16,6 +16,7 @@ Motifer is a generic logs pattern manager build on top of Winston. It covers mul
 Motifer uses a number of open source projects to work properly:
 
 * [Winston](https://github.com/winstonjs/winston)
+* [Morgan](https://github.com/expressjs/morgan)
 
 And of course Motifer itself is open source with a public [repository](https://github.com/mahajanankur/motifer) on GitHub.
 
@@ -52,9 +53,9 @@ const printLogs = args => {
 }
 ```
 ``` log
-2020-08-31T09:45:53.717Z [filename.js] [functionName] [APPNAME] [INFO] [null] The sample info message.
-2020-08-31T09:45:53.720Z [filename.js] [functionName] [APPNAME] [DEBUG] [{"key1":"value1","key2":"value2"}] The sample debug message.
-2020-08-31T09:45:53.720Z [filename.js] [functionName] [APPNAME] [ERROR] [{"key1":"value1","key2":"value2"}] Error: Sample Error Message
+2020-08-31T09:45:53.717Z [filename.js] [APPNAME] [INFO] [null] The sample info message.
+2020-08-31T09:45:53.720Z [filename.js] [APPNAME] [DEBUG] [{"key1":"value1","key2":"value2"}] The sample debug message.
+2020-08-31T09:45:53.720Z [filename.js] [APPNAME] [ERROR] [{"key1":"value1"}] Error: Sample Error Message
     at getTerminatedEmployees (/motifer/examples/service.js:10:20)
     at Object.<anonymous> (motifer/examples/service.js:23:1)
     at Module._compile (internal/modules/cjs/loader.js:778:30)
@@ -65,7 +66,7 @@ const printLogs = args => {
     at Function.Module.runMain (internal/modules/cjs/loader.js:831:12)
     at startup (internal/bootstrap/node.js:283:19)
     at bootstrapNodeJSCore (internal/bootstrap/node.js:623:3)
-2020-08-31T09:45:53.720Z [filename.js] [functionName] [APPNAME] [ERROR] [null] Error: Sample Error Message
+2020-08-31T09:45:53.720Z [filename.js] [APPNAME] [ERROR] [null] Error: Sample Error Message
     at getTerminatedEmployees (/motifer/examples/service.js:10:20)
     at Object.<anonymous> (motifer/examples/service.js:23:1)
     at Module._compile (internal/modules/cjs/loader.js:778:30)
@@ -127,31 +128,40 @@ module.exports = router;
 ```
 > Request id is of `UUID V4` type.
 
+#### Log Patterns
+**Request Logs**
 ``` log
-2020-08-31T09:45:53.717Z [requestId] [filename.js] [functionName] [APPNAME] [INFO] [null] The sample info message.
-2020-08-31T09:45:53.720Z [40ee9106-e188-4db3-b3d9-b59ffc5195a1] [filename.js] [functionName] [APPNAME] [DEBUG] [{"key1":"value1","key2":"value2"}] The sample debug message.
-2020-08-31T09:45:53.720Z [requestID] [filename.js] [functionName] [APPNAME] [ERROR] [{"key1":"value1","key2":"value2"}] Error: Sample Error Message
-    at getTerminatedEmployees (/motifer/examples/service.js:10:20)
-    at Object.<anonymous> (motifer/examples/service.js:23:1)
-    at Module._compile (internal/modules/cjs/loader.js:778:30)
-    at Object.Module._extensions..js (internal/modules/cjs/loader.js:789:10)
-    at Module.load (internal/modules/cjs/loader.js:653:32)
-    at tryModuleLoad (internal/modules/cjs/loader.js:593:12)
-    at Function.Module._load (internal/modules/cjs/loader.js:585:3)
-    at Function.Module.runMain (internal/modules/cjs/loader.js:831:12)
-    at startup (internal/bootstrap/node.js:283:19)
-    at bootstrapNodeJSCore (internal/bootstrap/node.js:623:3)
-2020-08-31T09:45:53.720Z [requestID] [filename.js] [functionName] [APPNAME] [ERROR] [null] Error: Sample Error Message
-    at getTerminatedEmployees (/motifer/examples/service.js:10:20)
-    at Object.<anonymous> (motifer/examples/service.js:23:1)
-    at Module._compile (internal/modules/cjs/loader.js:778:30)
-    at Object.Module._extensions..js (internal/modules/cjs/loader.js:789:10)
-    at Module.load (internal/modules/cjs/loader.js:653:32)
-    at tryModuleLoad (internal/modules/cjs/loader.js:593:12)
-    at Function.Module._load (internal/modules/cjs/loader.js:585:3)
-    at Function.Module.runMain (internal/modules/cjs/loader.js:831:12)
-    at startup (internal/bootstrap/node.js:283:19)
-    at bootstrapNodeJSCore (internal/bootstrap/node.js:623:3)
+TIMESTAMP_ISO [request] [REQUEST_ID] [APP_NAME] [LOG_LEVEL] [REQUEST_METHOD] [REQUEST_IP] [API_PATH] [BODY]
+```
+**Service Logs**
+``` log
+TIMESTAMP_ISO [service] [REQUEST_ID] [FILENAME] [APP_NAME] [LOG_LEVEL] [ARGS] MULTI_OR_SINGLE_LINE_MESSAGE
+```
+**Response Logs**
+``` log
+TIMESTAMP_ISO [response] [REQUEST_ID] [APP_NAME] [LOG_LEVEL] [REQUEST_METHOD] [REQUEST_IP] [API_PATH] [RESPONSE_STATUS] [CONTENT_LENGTH] [RESPONSE_TIME] [USER_AGENT] 
+```
+
+``` log
+2020-09-13T15:39:26.320Z [request] [47de6d41-6dbd-44fc-9732-e28823755b58] [APP] [INFO] [GET] [::1] [/api/status/10?service=myservice&cc=IND] [{}]
+2020-09-13T15:39:26.325Z [service] [47de6d41-6dbd-44fc-9732-e28823755b58] [status.js] [APP] [INFO] [{}] Some sample messages to print.
+2020-09-13T15:39:26.325Z [service] [47de6d41-6dbd-44fc-9732-e28823755b58] [status.service.js] [APP] [DEBUG] [topic] Publishing data to channel.
+2020-09-13T15:39:26.326Z [service] [47de6d41-6dbd-44fc-9732-e28823755b58] [status.service.js] [APP] [ERROR] [topic] Error: Runtime Exception
+    at exports.checkStatus (/motifer/rest/src/services/status.service.js:8:18)
+    at router.get (/motifer/rest/src/controllers/status.js:15:5)
+    at Layer.handle [as handle_request] (/motifer/rest/node_modules/express/lib/router/layer.js:95:5)
+    at next (/motifer/rest/node_modules/express/lib/router/route.js:137:13)
+    at Route.dispatch (/motifer/rest/node_modules/express/lib/router/route.js:112:3)
+    at Layer.handle [as handle_request] (/motifer/rest/node_modules/express/lib/router/layer.js:95:5)
+    at /motifer/rest/node_modules/express/lib/router/index.js:281:22
+    at param (/motifer/rest/node_modules/express/lib/router/index.js:354:14)
+    at param (/motifer/rest/node_modules/express/lib/router/index.js:365:14)
+    at Function.process_params (/motifer/rest/node_modules/express/lib/router/index.js:410:3)
+2020-09-13T15:39:26.326Z [service] [47de6d41-6dbd-44fc-9732-e28823755b58] [status.js] [APP] [INFO] [null] Service status request.
+2020-09-13T15:39:26.331Z [response] [47de6d41-6dbd-44fc-9732-e28823755b58] [APP] [INFO] [GET] [::1] [/api/status/10?service=search&cc=IND] [304] [-] [6.018 ms] [Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36]
+
+2020-09-13T15:39:26.815Z [request] [bcf6d2e2-f8c9-49ee-9efa-65fb15d8b11e] [APP] [INFO] [GET] [::1] [/favicon.ico] [{}]
+2020-09-13T15:39:26.817Z [response] [bcf6d2e2-f8c9-49ee-9efa-65fb15d8b11e] [APP] [INFO] [GET] [::1] [/favicon.ico] [404] [150] [1.880 ms] [Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36]
 ```
 ### LoggerFactory
 
