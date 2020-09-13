@@ -78,6 +78,7 @@ const printLogs = args => {
     at startup (internal/bootstrap/node.js:283:19)
     at bootstrapNodeJSCore (internal/bootstrap/node.js:623:3)
 ```
+---
 ### ExpressLoggerFactory
 Initialize the `ExpressLoggerFactory` object once with express server object and use it in different routes.
 ``` js
@@ -163,6 +164,7 @@ TIMESTAMP_ISO [response] [REQUEST_ID] [APP_NAME] [LOG_LEVEL] [REQUEST_METHOD] [R
 2020-09-13T15:39:26.815Z [request] [bcf6d2e2-f8c9-49ee-9efa-65fb15d8b11e] [APP] [INFO] [GET] [::1] [/favicon.ico] [{}]
 2020-09-13T15:39:26.817Z [response] [bcf6d2e2-f8c9-49ee-9efa-65fb15d8b11e] [APP] [INFO] [GET] [::1] [/favicon.ico] [404] [150] [1.880 ms] [Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36]
 ```
+---
 ### LoggerFactory
 
 The **object** has three parameter.
