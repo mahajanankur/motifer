@@ -129,15 +129,15 @@ module.exports = router;
 > Request id is of `UUID V4` type.
 
 #### Log Patterns
-**Request Logs**
+##### Request Logs
 ``` log
 TIMESTAMP_ISO [request] [REQUEST_ID] [APP_NAME] [LOG_LEVEL] [REQUEST_METHOD] [REQUEST_IP] [API_PATH] [BODY]
 ```
-**Service Logs**
+##### Service Logs
 ``` log
 TIMESTAMP_ISO [service] [REQUEST_ID] [FILENAME] [APP_NAME] [LOG_LEVEL] [ARGS] MULTI_OR_SINGLE_LINE_MESSAGE
 ```
-**Response Logs**
+##### Response Logs
 ``` log
 TIMESTAMP_ISO [response] [REQUEST_ID] [APP_NAME] [LOG_LEVEL] [REQUEST_METHOD] [REQUEST_IP] [API_PATH] [RESPONSE_STATUS] [CONTENT_LENGTH] [RESPONSE_TIME] [USER_AGENT] 
 ```
