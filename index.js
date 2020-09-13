@@ -130,7 +130,7 @@ exports.ExpressLoggerFactory = function (service, level, express = null, path) {
         });
         // Morgan to track the response.
         // express.use(morgan(':date[iso] :id :http-version :method :referrer :remote-addr :remote-user :req[Auth] :url :status :res[content-length] - :response-time ms :user-agent'));
-        express.use(morgan(`:date[iso] [response] [:id] [${serviceName.toUpperCase()}] [${apiLogLevel}] [:method] [:remote-addr] [:url] [:status] [:res[content-length]] [:response-time ms] [:user-agent]`, { "stream": new LoggerStream() }));
+        express.use(morgan(`:date[iso] [response] [:id] [${serviceName.toUpperCase()}] [${apiLogLevel}] [:method] [:remote-addr] [:url] [:status] [:res[content-length]] [:response-time ms] [:user-agent]`, { "stream": loggerStream }));
         // express.use(morgan(morganFormat));
     }
     // if (!logger) {
@@ -164,14 +164,22 @@ morgan.token('id', function getId(req) {
     return req.id
 });
 
-class LoggerStream {
+// class LoggerStream {
 
-    write(message) {
-        let dto = {
-            message,
-            api: true
-        };
+//     write(message) {
+//         let dto = {
+//             message,
+//             api: true
+//         };
+//         logger.info(dto);
+//         // new LoggerObject("info", message);
+//     }
+// }
+
+const loggerStream = {
+    write: (message) => {
+        message = message.substring(0,message.lastIndexOf('\n'));
+        let dto = { message, api: true };
         logger.info(dto);
-        // new LoggerObject("info", message);
     }
 }
