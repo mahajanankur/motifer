@@ -9,6 +9,7 @@ Motifer is a generic logs pattern manager build on top of Winston. It covers mul
   - Log pattern validation.
   - Consistent log pattern across the application.
   - ELK and Cloudtrail support.
+  - Express API request and response logging. 
   - Express logger with an unique request id for a request flow.
 
 ### Overview
