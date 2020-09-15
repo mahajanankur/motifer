@@ -29,7 +29,6 @@ Install the dependencies and devDependencies and start the server.
 ```sh
 $ npm i motifer
 ```
----
 ## Usage
 The recommended way to use `motifer` is to create a logger. The simplest way to do this is using `LoggerFactory` or `ExpressLoggerFactory`.
 ### LoggerFactory
