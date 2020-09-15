@@ -78,6 +78,7 @@ const printLogs = args => {
 ---
 ### ExpressLoggerFactory
 Initialize the `ExpressLoggerFactory` object once with express server object and use it in different routes.
+##### index.js / app.js
 ``` js
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -106,7 +107,7 @@ server.listen(port, () => {
 server.use("/api", route);
 ```
 
-
+##### routes.js / service.js / repository.js
 ``` js
 const express = require("express");
 const { Logger } = require("motifer");
