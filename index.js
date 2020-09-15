@@ -2,7 +2,7 @@ const { winstonLoggerClient } = require('./winstonClient');
 const httpContext = require('express-http-context');
 const uuid = require('uuid');
 const morgan = require('morgan');
-const morganFormat = "combined";
+// const morganFormat = "combined";
 const apiLogLevel = "INFO";
 const IS_EXPRESS = true;
 
@@ -40,33 +40,34 @@ const LoggerBuilder = function (filename, isExpress) {
         info: function (msg) {
             this.level = "info";
             this.message = msg;
-            return this;
+            return this.build();
         },
         debug: function (msg) {
             this.level = "debug";
             this.message = msg;
-            return this;
+            return this.build();
         },
         error: function (msg) {
             this.level = "error";
             this.message = msg;
-            return this;
+            return this.build();
         },
         warn: function (msg) {
             this.level = "warn";
             this.message = msg;
-            return this;
+            return this.build();
         },
-        arguments: function (arguments) {
-            this.args = arguments;
-            return this;
-        },
+        // @depricated
+        // arguments: function (arguments) {
+        //     this.args = arguments;
+        //     return this;
+        // },
         build: function () {
             // TODO - Find the efficient approach - This is not working for ES6.
             // let functionName = this.build.caller.name;
             // let customLogger = new LoggerObject(this.level, this.message, this.args, filename, functionName, isExpress);
             let customLogger = new LoggerObject(this.level, this.message, this.args, filename, isExpress);
-            this.arguments(null);
+            // this.arguments(null);
             return customLogger;
         }
     };
@@ -81,7 +82,7 @@ const LoggerBuilder = function (filename, isExpress) {
  * @param {string} path logfile name with path.
  * @returns {LoggerBuilder} LoggerBuilder 
  */
-exports.LoggerFactory = function (service, level, path) {
+const LoggerFactory = function (service, level, path) {
     serviceName = service;
     this.path = path;
     this.level = level;
@@ -108,7 +109,7 @@ exports.LoggerFactory = function (service, level, path) {
  * @param {string} path logfile name with path.
  * @returns {LoggerBuilder} LoggerBuilder
  */
-exports.ExpressLoggerFactory = function (service, level, express = null, path) {
+const ExpressLoggerFactory = function (service, level, express = null, path) {
     serviceName = service;
     this.path = path;
     this.level = level;
@@ -122,7 +123,7 @@ exports.ExpressLoggerFactory = function (service, level, express = null, path) {
             req.id = requestId;
             // Request Logging
             let dto = {
-                message: `${new Date().toISOString()} [request] [${requestId}] [${serviceName.toUpperCase()}] [${apiLogLevel}] [${req.method}] [${req.ip}] [${req.originalUrl}] [${req.body ? JSON.stringify(req.body) : null}]`,
+                message: `${new Date().toISOString()} [request] [${requestId}] [${serviceName}] [${apiLogLevel}] [${req.method}] [${req.ip}] [${req.originalUrl}] [${req.body ? JSON.stringify(req.body) : null}]`,
                 api: true
             };
             logger.info(dto);
@@ -130,7 +131,7 @@ exports.ExpressLoggerFactory = function (service, level, express = null, path) {
         });
         // Morgan to track the response.
         // express.use(morgan(':date[iso] :id :http-version :method :referrer :remote-addr :remote-user :req[Auth] :url :status :res[content-length] - :response-time ms :user-agent'));
-        express.use(morgan(`:date[iso] [response] [:id] [${serviceName.toUpperCase()}] [${apiLogLevel}] [:method] [:remote-addr] [:url] [:status] [:res[content-length]] [:response-time ms] [:user-agent]`, { "stream": loggerStream }));
+        express.use(morgan(`:date[iso] [response] [:id] [${serviceName}] [${apiLogLevel}] [:method] [:remote-addr] [:url] [:status] [:res[content-length]] [:response-time ms] [:user-agent]`, { "stream": loggerStream }));
         // express.use(morgan(morganFormat));
     }
     // if (!logger) {
@@ -154,10 +155,10 @@ exports.ExpressLoggerFactory = function (service, level, express = null, path) {
  * @param {boolean} isExpress Boolean if using this with express js, default is true.
  * @returns {LoggerBuilder} LoggerBuilder.
  */
-exports.Logger = function (filename, isExpress) {
-    filename = filename.replace(/^.*[\\\/]/, '');
-    return new LoggerBuilder(filename, (isExpress != undefined && typeof isExpress === "boolean") ? isExpress : IS_EXPRESS);
-}
+// exports.Logger = function (filename, isExpress) {
+//     filename = filename.replace(/^.*[\\\/]/, '');
+//     return new LoggerBuilder(filename, (isExpress != undefined && typeof isExpress === "boolean") ? isExpress : IS_EXPRESS);
+// }
 
 // Custom request Id token for Morgan.
 morgan.token('id', function getId(req) {
@@ -182,4 +183,25 @@ const loggerStream = {
         let dto = { message, api: true };
         logger.info(dto);
     }
+}
+
+class Logger {
+    /**
+     * @author Ankur Mahajan
+     * @class Logger
+     * @summary This is a actual logger object that prints the logs in the console and file appenders.
+     * @param {string} filename Filename of the javascript file.
+     * @param {boolean} isExpress Boolean if using this with express js, default is true.
+     * @returns {LoggerBuilder} LoggerBuilder.
+     */
+    static getLogger(filename, isExpress) {
+        filename = filename.replace(/^.*[\\\/]/, '');
+        return new LoggerBuilder(filename, (isExpress != undefined && typeof isExpress === "boolean") ? isExpress : IS_EXPRESS);
+    }
+}
+
+module.exports = {
+    LoggerFactory,
+    ExpressLoggerFactory,
+    Logger
 }

@@ -12,9 +12,10 @@ const customFormat = printf(info => {
         return `${info.message}`;
     } else {
         if (info.isExpress) {
-            return `${info.timestamp} [service] [${requestId ? requestId : null}] [${info.filename}] [${info.label.toUpperCase()}] [${info.level.toUpperCase()}] [${info.args ? JSON.stringify(info.args) : null}] ${info.message}`;
+            // [${info.args ? JSON.stringify(info.args) : null}]
+            return `${info.timestamp} [service] [${requestId ? requestId : null}] [${info.label}] [${info.level.toUpperCase()}] [${info.filename}] ${info.message}`;
         } else {
-            return `${info.timestamp} [${info.filename}] [${info.label.toUpperCase()}] [${info.level.toUpperCase()}] [${info.args ? JSON.stringify(info.args) : null}] ${info.message}`;
+            return `${info.timestamp} [${info.filename}] [${info.label}] [${info.level.toUpperCase()}] [${info.filename}] ${info.message}`;
         }
     }
 });
