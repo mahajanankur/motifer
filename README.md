@@ -23,7 +23,7 @@ And of course Motifer itself is open source with a public [repository](https://g
 
 ### Installation
 
-Motider requires [Node.js](https://nodejs.org/) to run.
+Motifer requires [Node.js](https://nodejs.org/) to run.
 
 Install the dependencies and devDependencies and start the server.
 
