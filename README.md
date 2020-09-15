@@ -8,9 +8,8 @@ Motifer is a generic logs pattern manager build on top of Winston. It covers mul
 
   - Log pattern validation.
   - Consistent log pattern across the application.
-  - ELK and Cloudtrail support.
-  - Express API request and response logging. 
-  - Express logger with an unique request id for a request flow.
+  - Logstash and Cloudtrail support.
+  - Request and response logging with a **unique request id** for a request flow.
 
 ### Overview
 
@@ -30,7 +29,7 @@ Install the dependencies and devDependencies and start the server.
 ```sh
 $ npm i motifer
 ```
-
+---
 ## Usage
 The recommended way to use `motifer` is to create a logger. The simplest way to do this is using `LoggerFactory` or `ExpressLoggerFactory`.
 ### LoggerFactory
@@ -47,16 +46,14 @@ const { Logger } = require('./index');
 let logger = Logger.getLogger(__filename);
 
 const printLogs = args => {
-        logger
-            .info(`The message to print ${args.subargs}`)
-            .arguments(args)
-            .build();
+        logger.info(`The message to print ${args.subargs}`);
 }
 ```
 ``` log
-2020-08-31T09:45:53.717Z [filename.js] [APPNAME] [INFO] [null] The sample info message.
-2020-08-31T09:45:53.720Z [filename.js] [APPNAME] [DEBUG] [{"key1":"value1","key2":"value2"}] The sample debug message.
-2020-08-31T09:45:53.720Z [filename.js] [APPNAME] [ERROR] [{"key1":"value1"}] Error: Sample Error Message
+2020-08-31T09:45:53.717Z [APP_NAME] [INFO] [filename.js] The sample info message.
+2020-08-31T09:45:53.720Z [APP_NAME] [DEBUG] [filename.js] The sample debug message. The arguments are {"key1":"value1","key2":"value2"}.
+2020-08-31T09:45:53.721Z [APP_NAME] [WARN] [filename.js] The sample warn message.
+2020-08-31T09:45:53.722Z [APP_NAME] [ERROR] [filename.js] Error: Sample Error Message with arguments {"key1":"value1"}
     at getTerminatedEmployees (/motifer/examples/service.js:10:20)
     at Object.<anonymous> (motifer/examples/service.js:23:1)
     at Module._compile (internal/modules/cjs/loader.js:778:30)
@@ -67,7 +64,7 @@ const printLogs = args => {
     at Function.Module.runMain (internal/modules/cjs/loader.js:831:12)
     at startup (internal/bootstrap/node.js:283:19)
     at bootstrapNodeJSCore (internal/bootstrap/node.js:623:3)
-2020-08-31T09:45:53.720Z [filename.js] [APPNAME] [ERROR] [null] Error: Sample Error Message
+2020-08-31T09:45:53.723Z [APP_NAME] [ERROR] [filename.js] Error: Sample Error Message
     at getTerminatedEmployees (/motifer/examples/service.js:10:20)
     at Object.<anonymous> (motifer/examples/service.js:23:1)
     at Module._compile (internal/modules/cjs/loader.js:778:30)
@@ -103,7 +100,7 @@ const logger = Logger.getLogger(__filename);
 
 //Server port configuration.
 server.listen(port, () => {
-    logger.info(`Motifer node server is running on port: ${port}`).build();
+    logger.info(`Motifer node server is running on port: ${port}`);
 });
 
 //Register the controllers as routers.
@@ -115,14 +112,16 @@ server.use("/api", route);
 const express = require("express");
 const { Logger } = require("motifer");
 //ExpressLoggerFactory should be initialized before using this in index.js.
-const logger = Logger(__filename);
+const logger = Logger.getLogger(__filename);
 //Get router from express
 const router = express.Router();
 
 //Resources
 router.get("/status", async (req, res, next) => {
-    logger.info("Service status request.").arguments(req.body).build();
-    logger.debug("Service is up.").build();
+    logger.info("Service status request.");
+    logger.debug("Service is up, sample debug log.");
+    logger.warn("Warning the parameter is null, sample warn log.");
+    logger.error("Exception is thrown, sample error log.");
     return res.json({message: "Service is running!!"});
 });
 
@@ -137,7 +136,7 @@ TIMESTAMP_ISO [request] [REQUEST_ID] [APP_NAME] [LOG_LEVEL] [REQUEST_METHOD] [RE
 ```
 ##### Service Logs
 ``` log
-TIMESTAMP_ISO [service] [REQUEST_ID] [FILENAME] [APP_NAME] [LOG_LEVEL] [ARGS] MULTI_OR_SINGLE_LINE_MESSAGE
+TIMESTAMP_ISO [service] [REQUEST_ID] [APP_NAME] [LOG_LEVEL] [FILENAME] MULTI_OR_SINGLE_LINE_MESSAGE
 ```
 ##### Response Logs
 ``` log
@@ -145,10 +144,10 @@ TIMESTAMP_ISO [response] [REQUEST_ID] [APP_NAME] [LOG_LEVEL] [REQUEST_METHOD] [R
 ```
 
 ``` log
-2020-09-13T15:39:26.320Z [request] [47de6d41-6dbd-44fc-9732-e28823755b58] [APP] [INFO] [GET] [::1] [/api/status/10?service=myservice&cc=IND] [{}]
-2020-09-13T15:39:26.325Z [service] [47de6d41-6dbd-44fc-9732-e28823755b58] [status.js] [APP] [INFO] [{}] Some sample messages to print.
-2020-09-13T15:39:26.325Z [service] [47de6d41-6dbd-44fc-9732-e28823755b58] [status.service.js] [APP] [DEBUG] [topic] Publishing data to channel.
-2020-09-13T15:39:26.326Z [service] [47de6d41-6dbd-44fc-9732-e28823755b58] [status.service.js] [APP] [ERROR] [topic] Error: Runtime Exception
+2020-09-13T15:39:26.320Z [request] [47de6d41-6dbd-44fc-9732-e28823755b58] [APP_NAME] [INFO] [GET] [::1] [/api/status/10?service=myservice&cc=IND] [{}]
+2020-09-13T15:39:26.325Z [service] [47de6d41-6dbd-44fc-9732-e28823755b58] [APP_NAME] [INFO] [status.js] Some sample messages to print.
+2020-09-13T15:39:26.325Z [service] [47de6d41-6dbd-44fc-9732-e28823755b58] [APP_NAME] [DEBUG] [status.service.js] Publishing data to channel with topic: sampleTopic.
+2020-09-13T15:39:26.326Z [service] [47de6d41-6dbd-44fc-9732-e28823755b58] [APP_NAME] [ERROR] [status.service.js] Error: Runtime Exception
     at exports.checkStatus (/motifer/rest/src/services/status.service.js:8:18)
     at router.get (/motifer/rest/src/controllers/status.js:15:5)
     at Layer.handle [as handle_request] (/motifer/rest/node_modules/express/lib/router/layer.js:95:5)
@@ -159,11 +158,10 @@ TIMESTAMP_ISO [response] [REQUEST_ID] [APP_NAME] [LOG_LEVEL] [REQUEST_METHOD] [R
     at param (/motifer/rest/node_modules/express/lib/router/index.js:354:14)
     at param (/motifer/rest/node_modules/express/lib/router/index.js:365:14)
     at Function.process_params (/motifer/rest/node_modules/express/lib/router/index.js:410:3)
-2020-09-13T15:39:26.326Z [service] [47de6d41-6dbd-44fc-9732-e28823755b58] [status.js] [APP] [INFO] [null] Service status request.
-2020-09-13T15:39:26.331Z [response] [47de6d41-6dbd-44fc-9732-e28823755b58] [APP] [INFO] [GET] [::1] [/api/status/10?service=search&cc=IND] [304] [-] [6.018 ms] [Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36]
-
-2020-09-13T15:39:26.815Z [request] [bcf6d2e2-f8c9-49ee-9efa-65fb15d8b11e] [APP] [INFO] [GET] [::1] [/favicon.ico] [{}]
-2020-09-13T15:39:26.817Z [response] [bcf6d2e2-f8c9-49ee-9efa-65fb15d8b11e] [APP] [INFO] [GET] [::1] [/favicon.ico] [404] [150] [1.880 ms] [Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36]
+2020-09-13T15:39:26.326Z [service] [47de6d41-6dbd-44fc-9732-e28823755b58] [APP_NAME] [WARN] [status.js] Service status request.
+2020-09-13T15:39:26.331Z [response] [47de6d41-6dbd-44fc-9732-e28823755b58] [APP_NAME] [INFO] [GET] [::1] [/api/status/10?service=search&cc=IND] [304] [10] [6.018 ms] [Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36]
+2020-09-13T15:39:26.815Z [request] [bcf6d2e2-f8c9-49ee-9efa-65fb15d8b11e] [APP_NAME] [INFO] [GET] [::1] [/favicon.ico] [{}]
+2020-09-13T15:39:26.817Z [response] [bcf6d2e2-f8c9-49ee-9efa-65fb15d8b11e] [APP_NAME] [INFO] [GET] [::1] [/favicon.ico] [404] [150] [1.880 ms] [Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36]
 ```
 ---
 ### LoggerFactory
