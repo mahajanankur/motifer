@@ -1,29 +1,26 @@
 const { Logger } = require('./index');
 const logger = Logger.getLogger(__filename);
-// require('./index');
-// const { Logger } = require('../index');
-// const logger = Logger(__filename);
 
-const getTerminatedEmployees = employees => {
+const getEmployees = employees => {
     employees.forEach(element => {
-        logger.info(`The first name is ${element.first}`).arguments(element).build();
+        logger.info(`The first name is ${element.first}`);
         otherFunction();
-        logger.debug(`The function is successfull`).build();
+        logger.debug(`The function is successfull`);
     });
     throwException(new Error("Sample Error"));
 }
 
 const otherFunction = () => {
-    logger.debug(`In the other function`).build();
+    logger.debug(`In the other function`);
 }
 
 const throwException = (err) => {
-    // logger.error(`Exception thrown`).arguments(err.stack).build();
-    logger.error(err.stack).build();
+    // logger.error(`Exception thrown`);
+    logger.error(err.stack);
     // console.log(err.stack);
 }
 
-getTerminatedEmployees([
+getEmployees([
     {
         first: "John",
         last: "Doe"
