@@ -4,7 +4,7 @@
 
 [![NPM](https://nodei.co/npm/motifer.png?downloads=true&downloadRank=true)](https://nodei.co/npm/motifer/)
 
-Motifer is a generic logs pattern manager build on top of Winston. It covers multiple usecases as follows.
+Motifer is a generic logs pattern builder on top of Winston. It covers multiple usecases as follows.
 
   - Log pattern validation.
   - Consistent log pattern across the application.
