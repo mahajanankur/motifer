@@ -5,6 +5,17 @@ const { combine, timestamp, label, printf, align, colorize } = format;
 const supportedLevels = ["debug", "info", "warn", "error"];
 const defaultLevel = "info";
 const REQUEST_ID = "requestId"
+const loggingLevels = {
+    crawlError: -2,
+    crawlInfo: -1,
+    error: 0,
+    warn: 1,
+    info: 2,
+    http: 3,
+    verbose: 4,
+    debug: 5,
+    silly: 6
+};
 
 const customFormat = printf(info => {
     let requestId = httpContext.get(REQUEST_ID);
@@ -34,6 +45,7 @@ exports.winstonLoggerClient = (level, path) => {
                 timestamp(),
                 customFormat
             ),
+            levels: loggingLevels,
             transports: [
                 new transports.Console({ level }),
                 new transports.File({ filename: path, level: level })
@@ -45,6 +57,7 @@ exports.winstonLoggerClient = (level, path) => {
                 timestamp(),
                 customFormat
             ),
+            levels: loggingLevels,
             transports: [
                 new transports.Console({ level })]
         });

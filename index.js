@@ -2,6 +2,7 @@ const { winstonLoggerClient } = require('./winstonClient');
 const httpContext = require('express-http-context');
 const uuid = require('uuid');
 const morgan = require('morgan');
+const util = require('util');
 // const morganFormat = "combined";
 const apiLogLevel = "INFO";
 const IS_EXPRESS = true;
@@ -33,28 +34,35 @@ let LoggerObject = function (level, message, args, filename, isExpress) {
 * @param {string} filename filename with path.
 */
 const LoggerBuilder = function (filename, isExpress) {
-    let level;
-    let message;
-    let args;
     return {
-        info: function (msg) {
+        info: function (...args) {
             this.level = "info";
-            this.message = msg;
+            this.message = util.format(...args);
             return this.build();
         },
-        debug: function (msg) {
+        debug: function (...args) {
             this.level = "debug";
-            this.message = msg;
+            this.message = util.format(...args);
             return this.build();
         },
-        error: function (msg) {
+        error: function (...args) {
             this.level = "error";
-            this.message = msg;
+            this.message = util.format(...args);
             return this.build();
         },
-        warn: function (msg) {
+        warn: function (...args) {
             this.level = "warn";
-            this.message = msg;
+            this.message = util.format(...args);
+            return this.build();
+        },
+        crawlError: function (...args) {
+            this.level = "crawlError";
+            this.message = util.format(...args);
+            return this.build();
+        },
+        crawlInfo: function (...args) {
+            this.level = "crawlInfo";
+            this.message = util.format(...args);
             return this.build();
         },
         // @depricated
@@ -179,7 +187,7 @@ morgan.token('id', function getId(req) {
 
 const loggerStream = {
     write: (message) => {
-        message = message.substring(0,message.lastIndexOf('\n'));
+        message = message.substring(0, message.lastIndexOf('\n'));
         let dto = { message, api: true };
         logger.info(dto);
     }

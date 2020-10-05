@@ -100,7 +100,7 @@ const logger = Logger.getLogger(__filename);
 
 //Server port configuration.
 server.listen(port, () => {
-    logger.info(`Motifer node server is running on port: ${port}`);
+    logger.info(`Motifer node server is running on port:`, port);
 });
 
 //Register the controllers as routers.
@@ -119,7 +119,7 @@ const router = express.Router();
 //Resources
 router.get("/status", async (req, res, next) => {
     logger.info("Service status request.");
-    logger.debug("Service is up, sample debug log.");
+    logger.debug("Service is up, sample debug log.", req.query);
     logger.warn("Warning the parameter is null, sample warn log.");
     logger.error("Exception is thrown, sample error log.");
     return res.json({message: "Service is running!!"});
