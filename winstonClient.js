@@ -4,7 +4,9 @@ const { createLogger, format, transports, level } = require('winston');
 const { combine, timestamp, label, printf, align, colorize } = format;
 const supportedLevels = ["debug", "info", "warn", "error"];
 const defaultLevel = "info";
-const REQUEST_ID = "requestId"
+const REQUEST_ID = "requestId";
+const DailyRotateFile = require('winston-daily-rotate-file');
+
 const loggingLevels = {
     crawlError: -2,
     crawlInfo: -1,
@@ -31,7 +33,21 @@ const customFormat = printf(info => {
     }
 });
 
-exports.winstonLoggerClient = (level, path) => {
+const fileRotation = (options) => {
+    let transport = new DailyRotateFile({
+        filename: options.filename || 'motifer-%DATE%.log',
+        datePattern: options.datePattern || 'YYYY-MM-DD',
+        zippedArchive: options.archived || true,
+        maxSize: options.maxSize || '20m',
+        maxFiles: options.maxFiles || '14d',
+        frequency: options.frequency || '1d',
+        dirname: options.dirname || '.'
+    });
+
+    return transport;
+}
+
+exports.winstonLoggerClient = (level, options) => {
     // level = level ? level : "info";
     if (level) {
         level = supportedLevels.includes(level.toLocaleLowerCase()) ? level.toLocaleLowerCase() : defaultLevel;
@@ -39,18 +55,38 @@ exports.winstonLoggerClient = (level, path) => {
         level = defaultLevel;
     }
     let logger = null;
-    if (path) {
-        logger = createLogger({
-            format: combine(
-                timestamp(),
-                customFormat
-            ),
-            levels: loggingLevels,
-            transports: [
-                new transports.Console({ level }),
-                new transports.File({ filename: path, level: level })
-            ]
-        });
+    if (options && options.filename) {
+        if (options.rotate) {
+            logger = createLogger({
+                format: combine(
+                    timestamp(),
+                    customFormat
+                ),
+                levels: loggingLevels,
+                transports: [
+                    new transports.Console({ level }),
+                    fileRotation(options)
+                ]
+            });
+        } else {
+            let path = '';
+            if (options.dirname) {
+                path = options.dirname + "/" + options.filename;
+            } else {
+                path = options.filename;
+            }
+            logger = createLogger({
+                format: combine(
+                    timestamp(),
+                    customFormat
+                ),
+                levels: loggingLevels,
+                transports: [
+                    new transports.Console({ level }),
+                    new transports.File({ filename: path, level: level })
+                ]
+            });
+        }
     } else {
         logger = createLogger({
             format: combine(
