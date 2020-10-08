@@ -36,7 +36,17 @@ Initialize the `LoggerFactory` object once and use it in different js files.
 ``` js
 const { LoggerFactory } = require('motifer');
 
-exports.Logger = new LoggerFactory("app_name", "log_level", "logfile.log");
+let options = {
+    "rotate": true,
+    "filename": "logfile-%DATE%.log",
+    "frequency": "5m",
+    "datePattern": "YYYY-MM-DD-HHmm",
+    "archived": true,
+    "maxSize": "20m",
+    "maxFiles": "14d",
+    "dirname": "/home/ankur/motifer/examples"
+}
+exports.Logger = new LoggerFactory("app_name", "log_level", options);
 ```
 Supported log levels are **info, debug, warn and error**.
 
@@ -94,8 +104,19 @@ const server = express();
 server.use(bodyParser.json());
 
 // Motifer - This is a mandatory initialization to send the express object to 
-// the motifer scope. If this configuration not set, it will not print the requestId. 
-const Logger = new ExpressLoggerFactory("app", "debug", server, "app.log");
+// the motifer scope. If this configuration not set, it will not print the requestId.
+
+let options = {
+    "rotate": true,
+    "filename": "logfile-%DATE%.log",
+    "frequency": "5m",
+    "datePattern": "YYYY-MM-DD-HHmm",
+    "archived": true,
+    "maxSize": "20m",
+    "maxFiles": "14d",
+    "dirname": "/home/ankur/motifer/examples"
+}
+const Logger = new ExpressLoggerFactory("app", "debug", server, options);
 const logger = Logger.getLogger(__filename);
 
 //Server port configuration.
@@ -172,7 +193,7 @@ The **object** has three parameter.
 | ------ | ------ | ------ | ------ | ------ |
 | service | Application or service name. | Yes | NA| This is a mandatory param.|
 | level | Log level for the application. | No | info| Info is default log level.|
-| path | Path of logfile with filename. | No | null| If not supplied file appender will not be attached.|
+| options | Object for file appender and rotation. | No | null| If not supplied file appender will not be attached.|
 
 ### ExpressLoggerFactory
 
@@ -183,8 +204,19 @@ The **object** has four parameter.
 | service | Application or service name. | Yes | NA| This is a mandatory param.|
 | level | Log level for the application. | Yes | NA| This is a mandatory param.|
 | express | Express object | Yes | NA| This is a mandatory param.|
-| path | Path of logfile with filename. | No | null| If not supplied file appender will not be attached.|
+| options | Object for file appender and rotation. | No | null| If not supplied file appender will not be attached.|
 
+---
+## Options
+You can rotate files by minute, hour, day, month, year or weekday. The object contains following options:
+
+* **frequency:** A string representing the frequency of rotation. This is useful if you want to have timed rotations, as opposed to rotations that happen at specific moments in time. Valid values are '#m' or '#h' (e.g., '5m' or '3h'). Leaving this null relies on `datePattern` for the rotation times. (default: '1d')
+* **datePattern:** A string representing the [moment.js date format](http://momentjs.com/docs/#/displaying/format/) to be used for rotating. The meta characters used in this string will dictate the frequency of the file rotation. For example, if your datePattern is simply 'HH' you will end up with 24 log files that are picked up and appended to every day. (default: 'YYYY-MM-DD')
+* **filename:** Filename to be used to log to. This filename can include the `%DATE%` placeholder which will include the formatted datePattern at that point in the filename. (default: 'motifer-%DATE%.log')
+* **dirname:** The directory name to save log files to. (default: '.')
+* **maxSize:** Maximum size of the file after which it will rotate. This can be a number of bytes, or units of kb, mb, and gb. If using the units, add 'k', 'm', or 'g' as the suffix. The units need to directly follow the number. (default: '20m')
+* **maxFiles:** Maximum number of logs to keep. If not set, no logs will be removed. This can be a number of files or number of days. If using days, add 'd' as the suffix. (default: '14d')
+---
 License
 ----
 
