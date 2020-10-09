@@ -1,6 +1,6 @@
 {
   "name": "motifer",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "Generic logs pattern manager for express, build on top of winston.",
   "main": "index.js",
   "scripts": {
