@@ -40,7 +40,7 @@ const fileRotation = (options) => {
         zippedArchive: options.archived || true,
         maxSize: options.maxSize || '20m',
         maxFiles: options.maxFiles || '14d',
-        frequency: options.frequency || '1d',
+        frequency: options.frequency || null,
         dirname: options.dirname || '.'
     });
 
