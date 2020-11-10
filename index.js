@@ -126,6 +126,16 @@ const ExpressLoggerFactory = function (service, level, express = null, path) {
         express.use(httpContext.middleware);
         // Run the context for each request. Assign a unique identifier to each request
         express.use((req, res, next) => {
+            // Bug fix for requestId gets undefind in some contexts.
+            if (!httpContext.ns.active) {
+                let context = httpContext.ns.createContext();
+                httpContext.ns.context = context;
+                httpContext.ns.active = context;
+
+            }
+            httpContext.ns.bindEmitter(req);
+            httpContext.ns.bindEmitter(res);
+
             let requestId = uuid.v4();
             httpContext.set('requestId', requestId);
             req.id = requestId;
