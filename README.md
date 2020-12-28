@@ -87,7 +87,7 @@ const printLogs = args => {
 ```
 ---
 ### ExpressLoggerFactory
-Initialize the `ExpressLoggerFactory` object once with express server object and use it in different routes.
+Initialize the `ExpressLoggerFactory` object once with express server object and use it in different routes. **Make sure you initialize the body parser middleware before motifer initialization to log the request body.**
 ##### index.js / app.js
 ``` js
 const express = require("express");
