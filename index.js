@@ -10,6 +10,7 @@ const IS_EXPRESS = true;
 let logger = null;
 let serviceName = null;
 let expressApp = null;
+let apmClient = null;
 
 let LoggerObject = function (level, message, args, filename, isExpress) {
     this.level = level;
@@ -38,6 +39,7 @@ const LoggerBuilder = function (filename, isExpress) {
         info: function (...args) {
             this.level = "info";
             this.message = util.format(...args);
+            // apmClient.startSpan(this.message);
             return this.build();
         },
         debug: function (...args) {
@@ -48,6 +50,7 @@ const LoggerBuilder = function (filename, isExpress) {
         error: function (...args) {
             this.level = "error";
             this.message = util.format(...args);
+            apmClient.captureError(this.message);
             return this.build();
         },
         warn: function (...args) {
@@ -58,6 +61,7 @@ const LoggerBuilder = function (filename, isExpress) {
         crawlError: function (...args) {
             this.level = "crawlError";
             this.message = util.format(...args);
+            apmClient.captureError(this.message);
             return this.build();
         },
         crawlInfo: function (...args) {
@@ -167,6 +171,22 @@ const ExpressLoggerFactory = function (service, level, express = null, path) {
 
 /**
  * @author Ankur Mahajan
+ * @class ApmFactory
+ * @summary This is an ApmFactory, used to integrate with elastic APM. Need to use this factory at very first line in ypur app.
+ * @param {string} service service name
+ */
+const ApmFactory = function (serviceName, apmUrl) {
+    apmClient = require('elastic-apm-node').start({
+        serviceName: serviceName,
+        serverUrl: apmUrl,
+        logLevel: 'trace',
+        captureBody: 'all',
+        usePathAsTransactionName: true
+    });
+}
+
+/**
+ * @author Ankur Mahajan
  * @class Logger
  * @summary This is a actual logger object that prints the logs in the console and file appenders.
  * @param {string} filename Filename of the javascript file.
@@ -221,5 +241,6 @@ class Logger {
 module.exports = {
     LoggerFactory,
     ExpressLoggerFactory,
-    Logger
+    Logger,
+    ApmFactory
 }
