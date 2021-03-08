@@ -39,7 +39,6 @@ const LoggerBuilder = function (filename, isExpress) {
         info: function (...args) {
             this.level = "info";
             this.message = util.format(...args);
-            // apmClient.startSpan(this.message);
             return this.build();
         },
         debug: function (...args) {
@@ -50,7 +49,9 @@ const LoggerBuilder = function (filename, isExpress) {
         error: function (...args) {
             this.level = "error";
             this.message = util.format(...args);
-            apmClient.captureError(this.message);
+            if (apmClient) {
+                apmClient.captureError(this.message);
+            }
             return this.build();
         },
         warn: function (...args) {
@@ -61,7 +62,9 @@ const LoggerBuilder = function (filename, isExpress) {
         crawlError: function (...args) {
             this.level = "crawlError";
             this.message = util.format(...args);
-            apmClient.captureError(this.message);
+            if (apmClient) {
+                apmClient.captureError(this.message);
+            }
             return this.build();
         },
         crawlInfo: function (...args) {
@@ -170,19 +173,51 @@ const ExpressLoggerFactory = function (service, level, express = null, path) {
 }
 
 /**
- * @author Ankur Mahajan
+ * @author Mohan Rana
  * @class ApmFactory
  * @summary This is an ApmFactory, used to integrate with elastic APM. Need to use this factory at very first line in ypur app.
- * @param {string} service service name
+ * @param {string} serviceName application service name.
+ * @param {string} apmUrl APM server url. APM server must be accessible.
+ * @param {string} logLevel APM log level.
  */
-const ApmFactory = function (serviceName, apmUrl) {
-    apmClient = require('elastic-apm-node').start({
-        serviceName: serviceName,
-        serverUrl: apmUrl,
-        logLevel: 'trace',
-        captureBody: 'all',
-        usePathAsTransactionName: true
-    });
+const ApmFactory = function (serviceName, apmUrl, logLevel) {
+    // trim extra white spaces.
+    serviceName = serviceName.trim();
+    apmUrl = apmUrl.trim();
+    logLevel = logLevel.trim();
+    let parameters = checkParameters(serviceName, apmUrl, logLevel);
+    if (parameters.flag) {
+        console.log(`${parameters.msg}`);
+        apmClient = require('elastic-apm-node').start({
+            serviceName: serviceName,
+            serverUrl: apmUrl,
+            logLevel: logLevel || 'error',
+            captureBody: 'all',
+            usePathAsTransactionName: true
+        });
+    }
+    else {
+        throw (parameters.msg);
+    }
+}
+
+const checkParameters = (serviceName, apmUrl, logLevel) => {
+    const object = { msg: 'parameter complete', flag: true }
+    if (!serviceName) {
+        object.msg = 'serviceName should not be empty.';
+        object.flag = false;
+        return object;
+    }
+    if (!apmUrl) {
+        object.msg = 'APM url should not be empty.';
+        object.flag = false;
+        return object;
+    }
+    if (!logLevel) {
+        object.msg = 'default log level applied.';
+        return object;
+    }
+    return object;
 }
 
 /**
