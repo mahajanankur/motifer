@@ -182,12 +182,14 @@ const ExpressLoggerFactory = function (service, level, express = null, path) {
  */
 const ApmFactory = function (serviceName, apmUrl, logLevel) {
     // trim extra white spaces.
+    if (!serviceName && !apmUrl) {
+        throw new Error(parameters.msg);
+    }
     serviceName = serviceName.trim();
     apmUrl = apmUrl.trim();
-    logLevel = logLevel.trim();
     let parameters = checkParameters(serviceName, apmUrl, logLevel);
     if (parameters.flag) {
-        console.log(`${parameters.msg}`);
+        // console.log(`${parameters.msg}`);
         apmClient = require('elastic-apm-node').start({
             serviceName: serviceName,
             serverUrl: apmUrl,
@@ -197,7 +199,7 @@ const ApmFactory = function (serviceName, apmUrl, logLevel) {
         });
     }
     else {
-        throw (parameters.msg);
+        throw new Error(parameters.msg);
     }
 }
 
