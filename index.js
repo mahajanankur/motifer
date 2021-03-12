@@ -49,9 +49,7 @@ const LoggerBuilder = function (filename, isExpress) {
         error: function (...args) {
             this.level = "error";
             this.message = util.format(...args);
-            if (apmClient) {
-                apmClient.captureError(this.message);
-            }
+            if (apmClient) apmClient.captureError(this.message);
             return this.build();
         },
         warn: function (...args) {
@@ -62,9 +60,7 @@ const LoggerBuilder = function (filename, isExpress) {
         crawlError: function (...args) {
             this.level = "crawlError";
             this.message = util.format(...args);
-            if (apmClient) {
-                apmClient.captureError(this.message);
-            }
+            if (apmClient) apmClient.captureError(this.message);
             return this.build();
         },
         crawlInfo: function (...args) {
@@ -176,50 +172,46 @@ const ExpressLoggerFactory = function (service, level, express = null, path) {
  * @author Mohan Rana
  * @class ApmFactory
  * @summary This is an ApmFactory, used to integrate with elastic APM. Need to use this factory at very first line in ypur app.
- * @param {string} serviceName application service name.
- * @param {string} apmUrl APM server url. APM server must be accessible.
- * @param {string} logLevel APM log level.
+ * @param {object} configObject parameters pass to apm server.
  */
-const ApmFactory = function (serviceName, apmUrl, logLevel) {
-    // trim extra white spaces.
-    if (!serviceName && !apmUrl) {
-        throw new Error(parameters.msg);
-    }
-    serviceName = serviceName.trim();
-    apmUrl = apmUrl.trim();
-    let parameters = checkParameters(serviceName, apmUrl, logLevel);
-    if (parameters.flag) {
-        // console.log(`${parameters.msg}`);
-        apmClient = require('elastic-apm-node').start({
-            serviceName: serviceName,
-            serverUrl: apmUrl,
-            logLevel: logLevel || 'error',
-            captureBody: 'all',
-            usePathAsTransactionName: true
-        });
-    }
-    else {
-        throw new Error(parameters.msg);
-    }
+
+const ApmFactory = function (configObject) {
+    const parameters = validateParameters(configObject);
+    apmClient = require('elastic-apm-node').start({
+        serviceName: parameters.serviceName,
+        serverUrl: parameters.apmServerUrl,
+        secretToken: parameters.secretToken,
+        logLevel: parameters.logLevel || 'error',
+        environment: parameters.environment || 'production',
+        transactionIgnoreUrls: parameters.transactionIgnoreUrls || [],
+        usePathAsTransactionName: false
+    });
 }
 
-const checkParameters = (serviceName, apmUrl, logLevel) => {
-    const object = { msg: 'parameter complete', flag: true }
-    if (!serviceName) {
-        object.msg = 'serviceName should not be empty.';
-        object.flag = false;
-        return object;
-    }
-    if (!apmUrl) {
-        object.msg = 'APM url should not be empty.';
-        object.flag = false;
-        return object;
-    }
-    if (!logLevel) {
-        object.msg = 'default log level applied.';
-        return object;
-    }
-    return object;
+const validateParameters = (params) => {
+    // Check required params.
+    const requiredParams = ['serviceName', 'apmServerUrl', 'secretToken'];
+    const intersection = Object.keys(params).filter(d => requiredParams.includes(d));
+    if (requiredParams.length != intersection.length) throw new Error(`Required parameter missing.`);
+    Object.keys(params).forEach((key) => {
+        // remove extra white space.
+        if (params[key] && typeof params[key] == "string") {
+            params[key] = params[key].trim();
+        }
+        // check string type.
+        if (key == 'serviceName' || key == 'secretToken' || key == 'logLevel') {
+            if (typeof params[key] != "string") throw new Error(`"${key}" must be a string type.`);
+        }
+        // check array type.
+        if (key == 'transactionIgnoreUrls') {
+            if (!Array.isArray(params[key])) throw new Error(`"${key}" must be an array type.`);
+        }
+        // check empty parameters.
+        if (key == 'serviceName' || key == 'apmServerUrl' || key == 'secretToken') {
+            if (!params[key]) throw new Error(`"${key}" should not be empty.`);
+        }
+    });
+    return params;
 }
 
 /**
