@@ -87,16 +87,16 @@ const LoggerBuilder = function (filename, isExpress) {
  * @summary This is a LoggerFactory, an entry point to the logger module.
  * @param {string} service service name.
  * @param {string} level log level i.e info, error, warn and debug.
- * @param {string} path logfile name with path.
+ * @param {object} options file and rotation object.
  * @returns {LoggerBuilder} LoggerBuilder 
  */
-const LoggerFactory = function (service, level, path) {
+const LoggerFactory = function (service, level, options) {
     serviceName = service;
-    this.path = path;
+    this.options = options;
     this.level = level;
     // if (!logger) {
     // initialize the winson logger.
-    logger = winstonLoggerClient(level, path);
+    logger = winstonLoggerClient(level, options);
     // }
     return {
         getLogger: (filename) => {
@@ -114,12 +114,12 @@ const LoggerFactory = function (service, level, path) {
  * @param {string} service service name
  * @param {string} level log level i.e info, error, warn and debug.
  * @param {Object} express instance of express server.
- * @param {string} path logfile name with path.
+ * @param {object} options file and rotation object.
  * @returns {LoggerBuilder} LoggerBuilder
  */
-const ExpressLoggerFactory = function (service, level, express = null, path) {
+const ExpressLoggerFactory = function (service, level, express = null, options) {
     serviceName = service;
-    this.path = path;
+    this.options = options;
     this.level = level;
     expressApp = express;
     if (express) {
@@ -154,7 +154,7 @@ const ExpressLoggerFactory = function (service, level, express = null, path) {
     }
     // if (!logger) {
     // initialize the winson logger.
-    logger = winstonLoggerClient(level, path);
+    logger = winstonLoggerClient(level, options);
     // }
     return {
         getLogger: (filename) => {
