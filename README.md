@@ -36,7 +36,7 @@ Initialize the `LoggerFactory` object once and use it in different js files.
 ``` js
 const { LoggerFactory } = require('motifer');
 
-let options = {
+let options = [{
     "rotate": true,
     "filename": "logfile-%DATE%.log",
     "frequency": "5m",
@@ -45,7 +45,7 @@ let options = {
     "maxSize": "20m",
     "maxFiles": "14d",
     "dirname": "/home/ankur/motifer/examples"
-}
+}]
 exports.Logger = new LoggerFactory("app_name", "log_level", options);
 ```
 Supported log levels are **info, debug, warn and error**.
@@ -106,7 +106,7 @@ server.use(bodyParser.json());
 // Motifer - This is a mandatory initialization to send the express object to 
 // the motifer scope. If this configuration not set, it will not print the requestId.
 
-let options = {
+let options = [{
     "rotate": true,
     "filename": "logfile-%DATE%.log",
     "frequency": "5m",
@@ -115,7 +115,7 @@ let options = {
     "maxSize": "20m",
     "maxFiles": "14d",
     "dirname": "/home/ankur/motifer/examples"
-}
+}]
 const Logger = new ExpressLoggerFactory("app", "debug", server, options);
 const logger = Logger.getLogger(__filename);
 
@@ -193,7 +193,7 @@ The **object** has three parameter.
 | ------ | ------ | ------ | ------ | ------ |
 | service | Application or service name. | Yes | NA| This is a mandatory param.|
 | level | Log level for the application. | No | info| Info is default log level.|
-| options | Object for file appender and rotation. | No | null| If not supplied file appender will not be attached.|
+| options | Array of objects for file appender and rotation. | No | null| If not supplied file appender will not be attached.|
 
 ### ExpressLoggerFactory
 
@@ -204,7 +204,7 @@ The **object** has four parameter.
 | service | Application or service name. | Yes | NA| This is a mandatory param.|
 | level | Log level for the application. | Yes | NA| This is a mandatory param.|
 | express | Express object | Yes | NA| This is a mandatory param.|
-| options | Object for file appender and rotation. | No | null| If not supplied file appender will not be attached.|
+| options | Array of objects for file appender and rotation. | No | null| If not supplied file appender will not be attached.|
 
 ---
 ## Options
@@ -233,10 +233,10 @@ const Logger = new ExpressLoggerFactory("app", "debug", server);
 //Initialize the express server.
 const server = express();
 
-let options = {
+let options = [{
     "filename": "logfile.log",
     "dirname": "/home/ankur/motifer/examples"
-}
+}]
 const Logger = new ExpressLoggerFactory("app", "debug", server, options);
 ```
 
@@ -245,7 +245,7 @@ const Logger = new ExpressLoggerFactory("app", "debug", server, options);
 //Initialize the express server.
 const server = express();
 
-let options = {
+let options = [{
     "rotate": true,
     "filename": "logfile-%DATE%.log",
     "frequency": "2d",
@@ -254,7 +254,7 @@ let options = {
     "maxSize": "20m",
     "maxFiles": "14d",
     "dirname": "/home/ankur/motifer/examples"
-}
+}]
 const Logger = new ExpressLoggerFactory("app", "debug", server, options);
 ```
 License

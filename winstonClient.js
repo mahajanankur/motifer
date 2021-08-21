@@ -65,7 +65,8 @@ const buildTransports = (level, options) => {
     let logLevel = verifyLogLevel(level);
     // default console transports
     transporters.push(new transports.Console({ logLevel }));
-    if (options && options.length > 0) {
+
+    if (options && options instanceof Array) {
         options.forEach(element => {
             // validation check on filename.
             if (!element.filename) {
@@ -84,6 +85,8 @@ const buildTransports = (level, options) => {
             }
 
         });
+    } else if (options && !(options instanceof Array)) {
+        throw new Error("Options should be an array.");
     }
     return transporters;
 }
