@@ -10,6 +10,7 @@ const IS_EXPRESS = true;
 let logger = null;
 let serviceName = null;
 let expressApp = null;
+let apmClient = null;
 
 let LoggerObject = function (level, message, args, filename, isExpress) {
     this.level = level;
@@ -38,6 +39,7 @@ const LoggerBuilder = function (filename, isExpress) {
         info: function (...args) {
             this.level = "info";
             this.message = util.format(...args);
+            // apmClient.startSpan(this.message);
             return this.build();
         },
         debug: function (...args) {
@@ -48,6 +50,7 @@ const LoggerBuilder = function (filename, isExpress) {
         error: function (...args) {
             this.level = "error";
             this.message = util.format(...args);
+            apmClient.captureError(this.message);
             return this.build();
         },
         warn: function (...args) {
@@ -58,6 +61,7 @@ const LoggerBuilder = function (filename, isExpress) {
         crawlError: function (...args) {
             this.level = "crawlError";
             this.message = util.format(...args);
+            apmClient.captureError(this.message);
             return this.build();
         },
         crawlInfo: function (...args) {
@@ -87,16 +91,16 @@ const LoggerBuilder = function (filename, isExpress) {
  * @summary This is a LoggerFactory, an entry point to the logger module.
  * @param {string} service service name.
  * @param {string} level log level i.e info, error, warn and debug.
- * @param {object} options file and rotation object.
+ * @param {string} path logfile name with path.
  * @returns {LoggerBuilder} LoggerBuilder 
  */
-const LoggerFactory = function (service, level, options) {
+const LoggerFactory = function (service, level, path) {
     serviceName = service;
-    this.options = options;
+    this.path = path;
     this.level = level;
     // if (!logger) {
     // initialize the winson logger.
-    logger = winstonLoggerClient(level, options);
+    logger = winstonLoggerClient(level, path);
     // }
     return {
         getLogger: (filename) => {
@@ -114,28 +118,18 @@ const LoggerFactory = function (service, level, options) {
  * @param {string} service service name
  * @param {string} level log level i.e info, error, warn and debug.
  * @param {Object} express instance of express server.
- * @param {object} options file and rotation object.
+ * @param {string} path logfile name with path.
  * @returns {LoggerBuilder} LoggerBuilder
  */
-const ExpressLoggerFactory = function (service, level, express = null, options) {
+const ExpressLoggerFactory = function (service, level, express = null, path) {
     serviceName = service;
-    this.options = options;
+    this.path = path;
     this.level = level;
     expressApp = express;
     if (express) {
         express.use(httpContext.middleware);
         // Run the context for each request. Assign a unique identifier to each request
         express.use((req, res, next) => {
-            // Bug fix for requestId gets undefind in some contexts.
-            if (!httpContext.ns.active) {
-                let context = httpContext.ns.createContext();
-                httpContext.ns.context = context;
-                httpContext.ns.active = context;
-
-            }
-            httpContext.ns.bindEmitter(req);
-            httpContext.ns.bindEmitter(res);
-
             let requestId = uuid.v4();
             httpContext.set('requestId', requestId);
             req.id = requestId;
@@ -154,7 +148,7 @@ const ExpressLoggerFactory = function (service, level, express = null, options) 
     }
     // if (!logger) {
     // initialize the winson logger.
-    logger = winstonLoggerClient(level, options);
+    logger = winstonLoggerClient(level, path);
     // }
     return {
         getLogger: (filename) => {
@@ -163,6 +157,22 @@ const ExpressLoggerFactory = function (service, level, express = null, options) 
         }
     }
     // return new LoggerBuilder();
+}
+
+/**
+ * @author Ankur Mahajan
+ * @class ApmFactory
+ * @summary This is an ApmFactory, used to integrate with elastic APM. Need to use this factory at very first line in ypur app.
+ * @param {string} service service name
+ */
+const ApmFactory = function (serviceName, apmUrl) {
+    apmClient = require('elastic-apm-node').start({
+        serviceName: serviceName,
+        serverUrl: apmUrl,
+        logLevel: 'trace',
+        captureBody: 'all',
+        usePathAsTransactionName: true
+    });
 }
 
 /**
@@ -221,5 +231,6 @@ class Logger {
 module.exports = {
     LoggerFactory,
     ExpressLoggerFactory,
-    Logger
+    Logger,
+    ApmFactory
 }

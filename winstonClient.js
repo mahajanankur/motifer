@@ -2,7 +2,7 @@
 const httpContext = require('express-http-context');
 const { createLogger, format, transports, level } = require('winston');
 const { combine, timestamp, label, printf, align, colorize } = format;
-const supportedLevels = ["debug", "info", "warn", "error"];
+// const supportedLevels = ["debug", "info", "warn", "error"];
 const defaultLevel = "info";
 const REQUEST_ID = "requestId";
 const DailyRotateFile = require('winston-daily-rotate-file');
@@ -48,56 +48,54 @@ const fileRotation = (options) => {
 }
 
 exports.winstonLoggerClient = (level, options) => {
-    // level = level ? level : "info";
-    if (level) {
-        level = supportedLevels.includes(level.toLocaleLowerCase()) ? level.toLocaleLowerCase() : defaultLevel;
-    } else {
-        level = defaultLevel;
-    }
-    let logger = null;
-    if (options && options.filename) {
-        if (options.rotate) {
-            logger = createLogger({
-                format: combine(
-                    timestamp(),
-                    customFormat
-                ),
-                levels: loggingLevels,
-                transports: [
-                    new transports.Console({ level }),
-                    fileRotation(options)
-                ]
-            });
-        } else {
-            let path = '';
-            if (options.dirname) {
-                path = options.dirname + "/" + options.filename;
-            } else {
-                path = options.filename;
-            }
-            logger = createLogger({
-                format: combine(
-                    timestamp(),
-                    customFormat
-                ),
-                levels: loggingLevels,
-                transports: [
-                    new transports.Console({ level }),
-                    new transports.File({ filename: path, level: level })
-                ]
-            });
-        }
-    } else {
-        logger = createLogger({
-            format: combine(
-                timestamp(),
-                customFormat
-            ),
-            levels: loggingLevels,
-            transports: [
-                new transports.Console({ level })]
-        });
-    }
+    let logger = createLogger({
+        format: combine(
+            timestamp(),
+            customFormat
+        ),
+        levels: loggingLevels,
+        transports: buildTransports(level, options)
+    });
 
     return logger;
+}
+
+const buildTransports = (level, options) => {
+    let transporters = [];
+    let logLevel = verifyLogLevel(level);
+    // default console transports
+    transporters.push(new transports.Console({ logLevel }));
+
+    if (options && options instanceof Array) {
+        options.forEach(element => {
+            // validation check on filename.
+            if (!element.filename) {
+                throw new Error("filename is null.");
+            }
+            logLevel = verifyLogLevel(element.level);
+            // check if rotation is enabled
+            if (element.rotate) {
+                transporters.push(fileRotation(element));
+            } else {
+                let path = element.filename;
+                if (element.dirname) {
+                    path = element.dirname + "/" + element.filename;
+                }
+                transporters.push(new transports.File({ filename: path, level: logLevel }));
+            }
+
+        });
+    } else if (options && !(options instanceof Array)) {
+        throw new Error("Options should be an array.");
+    }
+    return transporters;
+}
+
+const verifyLogLevel = (level) => {
+    let logLevel = defaultLevel;
+    if (level) {
+        // logLevel = supportedLevels.includes(level.toLocaleLowerCase()) ? level.toLocaleLowerCase() : defaultLevel;
+        logLevel = loggingLevels[level] ? level : defaultLevel;
+    }
+    return logLevel;
 }
