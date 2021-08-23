@@ -44,8 +44,9 @@ let options = [{
     "archived": true,
     "maxSize": "20m",
     "maxFiles": "14d",
-    "dirname": "/home/ankur/motifer/examples"
-}]
+    "dirname": "/home/ankur/motifer/examples",
+    "level": "debug"
+}];
 exports.Logger = new LoggerFactory("app_name", "log_level", options);
 ```
 Supported log levels are **info, debug, warn and error**.
@@ -114,8 +115,9 @@ let options = [{
     "archived": true,
     "maxSize": "20m",
     "maxFiles": "14d",
-    "dirname": "/home/ankur/motifer/examples"
-}]
+    "dirname": "/home/ankur/motifer/examples",
+    "level": "debug"
+}];
 const Logger = new ExpressLoggerFactory("app", "debug", server, options);
 const logger = Logger.getLogger(__filename);
 
@@ -210,14 +212,15 @@ The **object** has four parameter.
 ## Options
 You can rotate files by minute, hour, day, month, year or weekday. The object contains following options:
 
-- **rotate:** A boolean to define whether or not to rotate log files. (default: 'false')
-- **frequency:** A string representing the frequency of rotation. This is useful if you want to have timed rotations, as opposed to rotations that happen at specific moments in time. Valid values are '#m' (minites) or '#h' (hours) (e.g., '5m' or '3h'). You also need to mention the`datePattern` for the rotation times. (default: null)
-- **datePattern:** A string representing the [moment.js date format](http://momentjs.com/docs/#/displaying/format/) to be used for rotating. The meta characters used in this string will dictate the frequency of the file rotation. For example, if your datePattern is simply 'HH' you will end up with 24 log files that are picked up and appended to every day. **Make sure to define this along with the `frequency` for specific pattern rotation.** Example patterns for day: 'YYYY-MM-DD', hours: 'YYYY-MM-DD-HH' and minutes: 'YYYY-MM-DD-HHmm'. (default: 'YYYY-MM-DD').
-- **filename:** Filename to be used to log to. This filename can include the `%DATE%` placeholder which will include the formatted `datePattern` at that point in the filename. (default: 'motifer-%DATE%.log')
-- **dirname:** The directory name to save log files to. (default: '.')
-- **maxSize:** Maximum size of the file after which it will rotate. This can be a number of bytes, or units of `kb, mb, and gb`. If using the units, add 'k', 'm', or 'g' as the suffix. The units need to directly follow the number. (default: '20m')
-- **maxFiles:** Maximum number of logs to keep. If not set, no logs will be removed. This can be a number of files or number of days. If using days, add 'd' as the suffix. (default: '14d')
-- **archived:** A boolean to define whether or not to archived log files. (default: 'true')
+- **rotate:** A boolean to define whether or not to rotate log files. **(default: 'false')**
+- **frequency:** A string representing the frequency of rotation. This is useful if you want to have timed rotations, as opposed to rotations that happen at specific moments in time. Valid values are '#m' (minites) or '#h' (hours) (e.g., '5m' or '3h'). You also need to mention the`datePattern` for the rotation times. **(default: null)**
+- **datePattern:** A string representing the [moment.js date format](http://momentjs.com/docs/#/displaying/format/) to be used for rotating. The meta characters used in this string will dictate the frequency of the file rotation. For example, if your datePattern is simply 'HH' you will end up with 24 log files that are picked up and appended to every day. **Make sure to define this along with the `frequency` for specific pattern rotation.** Example patterns for day: 'YYYY-MM-DD', hours: 'YYYY-MM-DD-HH' and minutes: 'YYYY-MM-DD-HHmm'. **(default: 'YYYY-MM-DD')**
+- **filename:** Filename to be used to log to. This filename can include the `%DATE%` placeholder which will include the formatted `datePattern` at that point in the filename. **(default: 'motifer-%DATE%.log')**
+- **dirname:** The directory name to save log files to. **(default: '.')**
+- **maxSize:** Maximum size of the file after which it will rotate. This can be a number of bytes, or units of `kb, mb, and gb`. If using the units, add 'k', 'm', or 'g' as the suffix. The units need to directly follow the number. **(default: '20m')**
+- **maxFiles:** Maximum number of logs to keep. If not set, no logs will be removed. This can be a number of files or number of days. If using days, add 'd' as the suffix. **(default: '14d')**
+- **archived:** A boolean to define whether or not to archived log files. **(default: 'true')**
+- **level:** Log level for the file appender. **(default: 'info')**
 ---
 ## Examples
 
@@ -236,7 +239,7 @@ const server = express();
 let options = [{
     "filename": "logfile.log",
     "dirname": "/home/ankur/motifer/examples"
-}]
+}];
 const Logger = new ExpressLoggerFactory("app", "debug", server, options);
 ```
 
@@ -254,7 +257,34 @@ let options = [{
     "maxSize": "20m",
     "maxFiles": "14d",
     "dirname": "/home/ankur/motifer/examples"
-}]
+}];
+const Logger = new ExpressLoggerFactory("app", "debug", server, options);
+```
+### Logger with multiple file appenders.
+``` js
+//Initialize the express server.
+const server = express();
+
+let options = [
+{
+    "level": "error",
+    "filename": "error.log",
+    "dirname": "/home/ankur/motifer/examples"
+},
+{
+    "level": "warn",
+    "filename": "warn.log"
+},
+{
+    "rotate": true,
+    "filename": "logfile-%DATE%.log",
+    "frequency": "2d",
+    "datePattern": "YYYY-MM-DD-HH",
+    "archived": true,
+    "maxSize": "20m",
+    "maxFiles": "14d",
+    "dirname": "/home/ankur/motifer/examples"
+}];
 const Logger = new ExpressLoggerFactory("app", "debug", server, options);
 ```
 License
