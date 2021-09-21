@@ -290,7 +290,7 @@ const Logger = new ExpressLoggerFactory("app", "debug", server, options);
 License
 ----
 
-**Apache2.0**
+**Apache 2.0**
 
 
 **Free Software, Hell Yeah!**
