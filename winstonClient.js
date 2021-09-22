@@ -8,8 +8,8 @@ const REQUEST_ID = "requestId";
 const DailyRotateFile = require('winston-daily-rotate-file');
 
 const loggingLevels = {
-    crawlError: -2,
-    crawlInfo: -1,
+    crawlerror: -2,
+    crawlinfo: -1,
     error: 0,
     warn: 1,
     info: 2,
@@ -19,6 +19,11 @@ const loggingLevels = {
     silly: 6
 };
 
+const maskedLevels = {
+    crawlinfo: 'INFO',
+    crawlerror: 'ERROR'
+};
+
 const customFormat = printf(info => {
     let requestId = httpContext.get(REQUEST_ID);
     if (info.api) {
@@ -26,8 +31,14 @@ const customFormat = printf(info => {
     } else {
         if (info.isExpress) {
             // [${info.args ? JSON.stringify(info.args) : null}]
+            if(['crawlerror', 'crawlinfo'].includes(info.level)){
+                return `${info.timestamp} [${maskedLevels[info.level]}] ${info.message}`;
+            }
             return `${info.timestamp} [service] [${requestId ? requestId : null}] [${info.label}] [${info.level.toUpperCase()}] [${info.filename}] ${info.message}`;
         } else {
+            if(['crawlerror', 'crawlinfo'].includes(info.level)){
+                return `${info.timestamp} [${maskedLevels[info.level]}] ${info.message}`;
+            }
             return `${info.timestamp} [${info.filename}] [${info.label}] [${info.level.toUpperCase()}] [${info.filename}] ${info.message}`;
         }
     }
@@ -64,7 +75,7 @@ const buildTransports = (level, options) => {
     let transporters = [];
     let logLevel = verifyLogLevel(level);
     // default console transports
-    transporters.push(new transports.Console({ logLevel }));
+    transporters.push(new transports.Console({ level: logLevel }));
 
     if (options && options instanceof Array) {
         options.forEach(element => {
@@ -94,8 +105,8 @@ const buildTransports = (level, options) => {
 const verifyLogLevel = (level) => {
     let logLevel = defaultLevel;
     if (level) {
-        // logLevel = supportedLevels.includes(level.toLocaleLowerCase()) ? level.toLocaleLowerCase() : defaultLevel;
-        logLevel = loggingLevels[level] ? level : defaultLevel;
+        level = level.toLowerCase();
+        logLevel = loggingLevels[level] || level == 'error'  ? level : defaultLevel;
     }
     return logLevel;
 }
