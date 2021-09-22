@@ -56,12 +56,12 @@ const LoggerBuilder = function (filename, isExpress) {
             return this.build();
         },
         crawlError: function (...args) {
-            this.level = "crawlError";
+            this.level = "crawlerror";
             this.message = util.format(...args);
             return this.build();
         },
         crawlInfo: function (...args) {
-            this.level = "crawlInfo";
+            this.level = "crawlinfo";
             this.message = util.format(...args);
             return this.build();
         },
