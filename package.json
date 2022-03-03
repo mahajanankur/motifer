@@ -21,6 +21,7 @@
   "author": "Ankur Mahajan",
   "license": "Apache License 2.0",
   "dependencies": {
+    "elastic-apm-node": "^3.29.0",
     "express-http-context": "^1.2.4",
     "morgan": "^1.10.0",
     "util": "^0.12.3",

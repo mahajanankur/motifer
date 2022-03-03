@@ -2,6 +2,7 @@ const { winstonLoggerClient } = require('./winstonClient');
 const httpContext = require('express-http-context');
 const uuid = require('uuid');
 const morgan = require('morgan');
+const Joi = require('joi');
 const util = require('util');
 // const morganFormat = "combined";
 const apiLogLevel = "INFO";
@@ -10,6 +11,7 @@ const IS_EXPRESS = true;
 let logger = null;
 let serviceName = null;
 let expressApp = null;
+let apmClient = null;
 
 let LoggerObject = function (level, message, args, filename, isExpress) {
     this.level = level;
@@ -48,6 +50,7 @@ const LoggerBuilder = function (filename, isExpress) {
         error: function (...args) {
             this.level = "error";
             this.message = util.format(...args);
+            if (apmClient) apmClient.captureError(this.message);
             return this.build();
         },
         warn: function (...args) {
@@ -58,6 +61,7 @@ const LoggerBuilder = function (filename, isExpress) {
         crawlError: function (...args) {
             this.level = "crawlerror";
             this.message = util.format(...args);
+            if (apmClient) apmClient.captureError(this.message);
             return this.build();
         },
         crawlInfo: function (...args) {
@@ -166,6 +170,43 @@ const ExpressLoggerFactory = function (service, level, express = null, options) 
 }
 
 /**
+ * @author Mohan Rana
+ * @class ApmFactory
+ * @summary This is an ApmFactory, used to integrate with elastic APM. Need to use this factory at very first line in the application.
+ * @param configObject.serviceName Your application name.
+ * @param configObject.apmServerUrl APM server url.
+ * @param configObject.secretToken APM secret token.
+ * @param configObject.logLevel APM log level, default value 'error'.
+ * @param configObject.environment Your application instance, default value 'production'.
+ */
+
+const ApmFactory = function (configObject) {
+    const isValid = validateParameters(configObject);
+    if (isValid.error) throw new Error(isValid.error.message);
+    const parameters = isValid.value;
+    apmClient = require('elastic-apm-node').start({
+        serviceName: parameters.serviceName,
+        serverUrl: parameters.apmServerUrl,
+        secretToken: parameters.secretToken,
+        logLevel: parameters.logLevel || 'error',
+        environment: parameters.environment || 'production',
+        transactionIgnoreUrls: parameters.transactionIgnoreUrls || [],
+        usePathAsTransactionName: false
+    });
+}
+
+const validateParameters = (options) => {
+    const schema = Joi.object().keys({
+        serviceName: Joi.string().required(),
+        apmServerUrl: Joi.string().uri().required(),
+        secretToken: Joi.string().required(),
+        transactionIgnoreUrls: Joi.array()
+    }).unknown(true);
+    const result = schema.validate(options);
+    return result;
+}
+
+/**
  * @author Ankur Mahajan
  * @class Logger
  * @summary This is a actual logger object that prints the logs in the console and file appenders.
@@ -221,5 +262,6 @@ class Logger {
 module.exports = {
     LoggerFactory,
     ExpressLoggerFactory,
-    Logger
+    Logger,
+    ApmFactory
 }
