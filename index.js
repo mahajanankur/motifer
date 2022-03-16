@@ -193,6 +193,7 @@ const ApmFactory = function (configObject) {
         transactionIgnoreUrls: parameters.transactionIgnoreUrls || [],
         usePathAsTransactionName: false
     });
+    return apmClient;
 }
 
 const validateParameters = (options) => {
