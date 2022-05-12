@@ -153,7 +153,7 @@ const ExpressLoggerFactory = function (service, level, express = null, options) 
         });
         // Morgan to track the response.
         // express.use(morgan(':date[iso] :id :http-version :method :referrer :remote-addr :remote-user :req[Auth] :url :status :res[content-length] - :response-time ms :user-agent'));
-        express.use(morgan(`:date[iso] [response] [:id] [${serviceName}] [${apiLogLevel}] [:method] [:remote-addr] [:url] [:status] [:res[content-length]] [:response-time ms] [:user-agent]`, { "stream": loggerStream }));
+        express.use(morgan(`:date[iso] [response] [:id] [${serviceName}] [${apiLogLevel}] [:method] [:remote-addr] [:url] [:status] [:res[content-length]] [:response-time] [:user-agent]`, { "stream": loggerStream }));
         // express.use(morgan(morganFormat));
     }
     // if (!logger) {
