@@ -69,6 +69,11 @@ const LoggerBuilder = function (filename, isExpress) {
             this.message = util.format(...args);
             return this.build();
         },
+        crawlUi: function (...args) {
+            this.level = "crawlui";
+            this.message = util.format(...args);
+            return this.build();
+        },
         // @depricated
         // arguments: function (arguments) {
         //     this.args = arguments;
