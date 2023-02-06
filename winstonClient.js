@@ -9,6 +9,7 @@ const DailyRotateFile = require('winston-daily-rotate-file');
 
 const loggingLevels = {
     crawlerror: -2,
+    crawlui: -2,
     crawlinfo: -1,
     error: 0,
     warn: 1,
@@ -34,10 +35,16 @@ const customFormat = printf(info => {
             if(['crawlerror', 'crawlinfo'].includes(info.level)){
                 return `${info.timestamp} [${maskedLevels[info.level]}] ${info.message}`;
             }
+            if(info.level === 'crawlui'){
+                return `${info.message}`;
+            }
             return `${info.timestamp} [service] [${requestId ? requestId : null}] [${info.label}] [${info.level.toUpperCase()}] [${info.filename}] ${info.message}`;
         } else {
             if(['crawlerror', 'crawlinfo'].includes(info.level)){
                 return `${info.timestamp} [${maskedLevels[info.level]}] ${info.message}`;
+            }
+            if(info.level === 'crawlui'){
+                return `${info.message}`;
             }
             return `${info.timestamp} [${info.filename}] [${info.label}] [${info.level.toUpperCase()}] [${info.filename}] ${info.message}`;
         }
