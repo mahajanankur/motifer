@@ -1,6 +1,7 @@
 # Motifer
 
 [![Version npm](https://img.shields.io/npm/v/motifer.svg?style=flat-square)](https://www.npmjs.com/package/motifer)
+[![HitCount](https://hits.dwyl.com/mahajanankur/motifer.svg?style=flat-square)](http://hits.dwyl.com/mahajanankur/motifer)
 
 [![NPM](https://nodei.co/npm/motifer.png?downloads=true&downloadRank=true)](https://nodei.co/npm/motifer/)
 
