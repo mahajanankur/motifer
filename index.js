@@ -144,8 +144,13 @@ const ExpressLoggerFactory = function (service, level, express = null, options) 
             }
             httpContext.ns.bindEmitter(req);
             httpContext.ns.bindEmitter(res);
+            // Enhancement - request id chaining across the microservices.
+            let requestId = req.headers['request-id'];
+            if (!requestId) {
+                requestId = uuid.v4();
+                req.headers['request-id'] = requestId;
+            }
 
-            let requestId = uuid.v4();
             httpContext.set('requestId', requestId);
             req.id = requestId;
             // Request Logging
