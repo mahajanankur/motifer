@@ -1,10 +1,11 @@
 // const winston = require('winston');
 const httpContext = require('express-http-context');
-const { createLogger, format, transports, level } = require('winston');
+const { createLogger, format, transports, level, addColors } = require('winston');
 const { combine, timestamp, label, printf, align, colorize } = format;
 // const supportedLevels = ["debug", "info", "warn", "error"];
 const defaultLevel = "info";
-const REQUEST_ID = "requestId";
+// const REQUEST_ID = "requestId";
+const REQUEST_ID = "request-id";
 const DailyRotateFile = require('winston-daily-rotate-file');
 
 const loggingLevels = {
@@ -20,6 +21,13 @@ const loggingLevels = {
     silly: 6
 };
 
+const colors = {
+    error: 'red',
+    warn: 'yellow',
+    info: 'cyan',
+    debug: 'green'
+};
+
 const maskedLevels = {
     crawlinfo: 'INFO',
     crawlerror: 'ERROR'
@@ -27,23 +35,25 @@ const maskedLevels = {
 
 const customFormat = printf(info => {
     let requestId = httpContext.get(REQUEST_ID);
+
     if (info.api) {
         return `${info.message}`;
     } else {
         if (info.isExpress) {
             // [${info.args ? JSON.stringify(info.args) : null}]
-            if(['crawlerror', 'crawlinfo'].includes(info.level)){
+            if (['crawlerror', 'crawlinfo'].includes(info.level)) {
                 return `${info.timestamp} [${maskedLevels[info.level]}] ${info.message}`;
             }
-            if(info.level === 'crawlui'){
+            if (info.level === 'crawlui') {
                 return `${info.message}`;
             }
-            return `${info.timestamp} [service] [${requestId ? requestId : null}] [${info.label}] [${info.level.toUpperCase()}] [${info.filename}] ${info.message}`;
+            // return `${info.timestamp} [service] [${requestId ? requestId : null}] [${info.label}] [${info.level.toUpperCase()}] [${info.filename}] ${info.message}`;
+            return `${info.timestamp} [service] [${requestId ? requestId : null}] [${info.label}] [${info.level}] [${info.filename}] ${info.message}`;
         } else {
-            if(['crawlerror', 'crawlinfo'].includes(info.level)){
+            if (['crawlerror', 'crawlinfo'].includes(info.level)) {
                 return `${info.timestamp} [${maskedLevels[info.level]}] ${info.message}`;
             }
-            if(info.level === 'crawlui'){
+            if (info.level === 'crawlui') {
                 return `${info.message}`;
             }
             return `${info.timestamp} [${info.filename}] [${info.label}] [${info.level.toUpperCase()}] [${info.filename}] ${info.message}`;
@@ -68,13 +78,14 @@ const fileRotation = (options) => {
 exports.winstonLoggerClient = (level, options) => {
     let logger = createLogger({
         format: combine(
+            colorize({ all: true, colors: colors }),
             timestamp(),
-            customFormat
+            customFormat,
+            align(),
         ),
         levels: loggingLevels,
         transports: buildTransports(level, options)
     });
-
     return logger;
 }
 
@@ -83,6 +94,14 @@ const buildTransports = (level, options) => {
     let logLevel = verifyLogLevel(level);
     // default console transports
     transporters.push(new transports.Console({ level: logLevel }));
+    // transporters.push(new transports.Console({
+    //     level: logLevel,
+    //     format: combine(
+    //         colorize({ colors: colors }),
+    //         align(),
+    //         printf(info => `[${info.timestamp}] [${info.level.toUpperCase()}] ${info.message}`)
+    //     )
+    // }));
 
     if (options && options instanceof Array) {
         options.forEach(element => {
@@ -113,7 +132,7 @@ const verifyLogLevel = (level) => {
     let logLevel = defaultLevel;
     if (level) {
         level = level.toLowerCase();
-        logLevel = loggingLevels[level] || level == 'error'  ? level : defaultLevel;
+        logLevel = loggingLevels[level] || level == 'error' ? level : defaultLevel;
     }
     return logLevel;
 }

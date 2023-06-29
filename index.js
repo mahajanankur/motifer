@@ -7,6 +7,7 @@ const util = require('util');
 // const morganFormat = "combined";
 const apiLogLevel = "INFO";
 const IS_EXPRESS = true;
+const REQ_ID_HEADER = "request-id";
 
 let logger = null;
 let serviceName = null;
@@ -82,9 +83,7 @@ const LoggerBuilder = function (filename, isExpress) {
         build: function () {
             // TODO - Find the efficient approach - This is not working for ES6.
             // let functionName = this.build.caller.name;
-            // let customLogger = new LoggerObject(this.level, this.message, this.args, filename, functionName, isExpress);
             let customLogger = new LoggerObject(this.level, this.message, this.args, filename, isExpress);
-            // this.arguments(null);
             return customLogger;
         }
     };
@@ -103,17 +102,14 @@ const LoggerFactory = function (service, level, options) {
     serviceName = service;
     this.options = options;
     this.level = level;
-    // if (!logger) {
     // initialize the winson logger.
     logger = winstonLoggerClient(level, options);
-    // }
     return {
         getLogger: (filename) => {
             filename = filename.replace(/^.*[\\\/]/, '');
             return new LoggerBuilder(filename);
         }
     }
-    // return new LoggerBuilder();
 }
 
 /**
@@ -145,13 +141,13 @@ const ExpressLoggerFactory = function (service, level, express = null, options) 
             httpContext.ns.bindEmitter(req);
             httpContext.ns.bindEmitter(res);
             // Enhancement - request id chaining across the microservices.
-            let requestId = req.headers['request-id'];
+            let requestId = req.header(REQ_ID_HEADER);
             if (!requestId) {
                 requestId = uuid.v4();
-                req.headers['request-id'] = requestId;
+                req.headers[REQ_ID_HEADER] = requestId;
             }
 
-            httpContext.set('requestId', requestId);
+            httpContext.set(REQ_ID_HEADER, requestId);
             req.id = requestId;
             // Request Logging
             let dto = {
@@ -162,21 +158,16 @@ const ExpressLoggerFactory = function (service, level, express = null, options) 
             next();
         });
         // Morgan to track the response.
-        // express.use(morgan(':date[iso] :id :http-version :method :referrer :remote-addr :remote-user :req[Auth] :url :status :res[content-length] - :response-time ms :user-agent'));
         express.use(morgan(`:date[iso] [response] [:id] [${serviceName}] [${apiLogLevel}] [:method] [:remote-addr] [:url] [:status] [:res[content-length]] [:response-time] [:user-agent]`, { "stream": loggerStream }));
-        // express.use(morgan(morganFormat));
     }
-    // if (!logger) {
     // initialize the winson logger.
     logger = winstonLoggerClient(level, options);
-    // }
     return {
         getLogger: (filename) => {
             filename = filename.replace(/^.*[\\\/]/, '');
             return new LoggerBuilder(filename, true);
         }
     }
-    // return new LoggerBuilder();
 }
 
 /**
@@ -217,35 +208,10 @@ const validateParameters = (options) => {
     return result;
 }
 
-/**
- * @author Ankur Mahajan
- * @class Logger
- * @summary This is a actual logger object that prints the logs in the console and file appenders.
- * @param {string} filename Filename of the javascript file.
- * @param {boolean} isExpress Boolean if using this with express js, default is true.
- * @returns {LoggerBuilder} LoggerBuilder.
- */
-// exports.Logger = function (filename, isExpress) {
-//     filename = filename.replace(/^.*[\\\/]/, '');
-//     return new LoggerBuilder(filename, (isExpress != undefined && typeof isExpress === "boolean") ? isExpress : IS_EXPRESS);
-// }
-
 // Custom request Id token for Morgan.
 morgan.token('id', function getId(req) {
     return req.id
 });
-
-// class LoggerStream {
-
-//     write(message) {
-//         let dto = {
-//             message,
-//             api: true
-//         };
-//         logger.info(dto);
-//         // new LoggerObject("info", message);
-//     }
-// }
 
 const loggerStream = {
     write: (message) => {
