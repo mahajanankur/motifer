@@ -6,7 +6,9 @@ const Joi = require('joi');
 const util = require('util');
 // const morganFormat = "combined";
 const apiLogLevel = "INFO";
+const defaultLevel = "info";
 const IS_EXPRESS = true;
+const validLogLevels = ["crawlerror", "crawlui", "crawlinfo", "error", "warn", "info", "http", "verbose", "debug", "silly"];
 
 let logger = null;
 let serviceName = null;
@@ -74,17 +76,8 @@ const LoggerBuilder = function (filename, isExpress) {
             this.message = util.format(...args);
             return this.build();
         },
-        // @depricated
-        // arguments: function (arguments) {
-        //     this.args = arguments;
-        //     return this;
-        // },
         build: function () {
-            // TODO - Find the efficient approach - This is not working for ES6.
-            // let functionName = this.build.caller.name;
-            // let customLogger = new LoggerObject(this.level, this.message, this.args, filename, functionName, isExpress);
             let customLogger = new LoggerObject(this.level, this.message, this.args, filename, isExpress);
-            // this.arguments(null);
             return customLogger;
         }
     };
@@ -100,20 +93,24 @@ const LoggerBuilder = function (filename, isExpress) {
  * @returns {LoggerBuilder} LoggerBuilder 
  */
 const LoggerFactory = function (service, level, options) {
+    if (!service) {
+        throw new Error("Service name is required.");
+    }
+    if (level && !validLogLevels.includes(level)) {
+        throw new Error(`Invalid log level: ${level}. Supported levels are ${validLogLevels}`);
+    }
+
     serviceName = service;
+    this.level = level || defaultLevel;
     this.options = options;
-    this.level = level;
-    // if (!logger) {
     // initialize the winson logger.
     logger = winstonLoggerClient(level, options);
-    // }
     return {
         getLogger: (filename) => {
             filename = filename.replace(/^.*[\\\/]/, '');
             return new LoggerBuilder(filename);
         }
     }
-    // return new LoggerBuilder();
 }
 
 /**
@@ -127,10 +124,18 @@ const LoggerFactory = function (service, level, options) {
  * @returns {LoggerBuilder} LoggerBuilder
  */
 const ExpressLoggerFactory = function (service, level, express = null, options) {
+    if (!service) {
+        throw new Error("Service name is required.");
+    }
+    if (level && !validLogLevels.includes(level)) {
+        throw new Error(`Invalid log level: ${level}. Supported levels are ${validLogLevels}`);
+    }
+
     serviceName = service;
     this.options = options;
-    this.level = level;
     expressApp = express;
+    this.level = level || defaultLevel;
+    
     if (express) {
         express.use(httpContext.middleware);
         // Run the context for each request. Assign a unique identifier to each request
@@ -162,11 +167,8 @@ const ExpressLoggerFactory = function (service, level, express = null, options) 
             next();
         });
         // Morgan to track the response.
-        // express.use(morgan(':date[iso] :id :http-version :method :referrer :remote-addr :remote-user :req[Auth] :url :status :res[content-length] - :response-time ms :user-agent'));
         express.use(morgan(`:date[iso] [response] [:id] [${serviceName}] [${apiLogLevel}] [:method] [:remote-addr] [:url] [:status] [:res[content-length]] [:response-time] [:user-agent]`, { "stream": loggerStream }));
-        // express.use(morgan(morganFormat));
     }
-    // if (!logger) {
     // initialize the winson logger.
     logger = winstonLoggerClient(level, options);
     // }
@@ -176,7 +178,6 @@ const ExpressLoggerFactory = function (service, level, express = null, options) 
             return new LoggerBuilder(filename, true);
         }
     }
-    // return new LoggerBuilder();
 }
 
 /**
@@ -217,35 +218,10 @@ const validateParameters = (options) => {
     return result;
 }
 
-/**
- * @author Ankur Mahajan
- * @class Logger
- * @summary This is a actual logger object that prints the logs in the console and file appenders.
- * @param {string} filename Filename of the javascript file.
- * @param {boolean} isExpress Boolean if using this with express js, default is true.
- * @returns {LoggerBuilder} LoggerBuilder.
- */
-// exports.Logger = function (filename, isExpress) {
-//     filename = filename.replace(/^.*[\\\/]/, '');
-//     return new LoggerBuilder(filename, (isExpress != undefined && typeof isExpress === "boolean") ? isExpress : IS_EXPRESS);
-// }
-
 // Custom request Id token for Morgan.
 morgan.token('id', function getId(req) {
     return req.id
 });
-
-// class LoggerStream {
-
-//     write(message) {
-//         let dto = {
-//             message,
-//             api: true
-//         };
-//         logger.info(dto);
-//         // new LoggerObject("info", message);
-//     }
-// }
 
 const loggerStream = {
     write: (message) => {
