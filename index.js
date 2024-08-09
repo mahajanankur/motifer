@@ -8,7 +8,7 @@ const util = require('util');
 const apiLogLevel = "INFO";
 const defaultLevel = "info";
 const IS_EXPRESS = true;
-const validLogLevels = ["crawlerror", "crawlui", "crawlinfo", "error", "warn", "info", "http", "verbose", "debug", "silly"];
+const validLogLevels = ["crawlerror", "crawlui", "crawlinfo", "error", "warn", "info", "http", "verbose", "debug", "silly", "usersessionactivity"];
 
 let logger = null;
 let serviceName = null;
@@ -73,6 +73,11 @@ const LoggerBuilder = function (filename, isExpress) {
         },
         crawlUi: function (...args) {
             this.level = "crawlui";
+            this.message = util.format(...args);
+            return this.build();
+        },
+        userSessionActivity: function (...args) {
+            this.level = "usersessionactivity";
             this.message = util.format(...args);
             return this.build();
         },
