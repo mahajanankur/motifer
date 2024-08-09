@@ -1,6 +1,6 @@
 {
   "name": "motifer",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Generic logs pattern manager for express, built on top of winston.",
   "main": "index.js",
   "scripts": {
@@ -29,7 +29,7 @@
     "morgan": "^1.10.0",
     "util": "^0.12.3",
     "uuid": "^8.3.0",
-    "winston": "^3.3.3",
+    "winston": "3.3.3",
     "winston-daily-rotate-file": "^4.5.0"
   }
 }
