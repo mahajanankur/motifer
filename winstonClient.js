@@ -66,7 +66,8 @@ const fileRotation = (options) => {
         maxSize: options.maxSize || '20m',
         maxFiles: options.maxFiles || '14d',
         frequency: options.frequency || null,
-        dirname: options.dirname || '.'
+        dirname: options.dirname || '.',
+        level: options.level
     });
 
     return transport;
