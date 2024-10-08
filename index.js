@@ -1,3 +1,9 @@
+// Add this polyfill at the top of your main file
+// Partial Fix of https://github.com/winstonjs/winston-transport/issues/247
+if (typeof globalThis === 'undefined') {
+    global.globalThis = global;
+}
+
 const { winstonLoggerClient } = require('./winstonClient');
 const httpContext = require('express-http-context');
 const uuid = require('uuid');
@@ -140,7 +146,7 @@ const ExpressLoggerFactory = function (service, level, express = null, options) 
     this.options = options;
     expressApp = express;
     this.level = level || defaultLevel;
-    
+
     if (express) {
         express.use(httpContext.middleware);
         // Run the context for each request. Assign a unique identifier to each request
