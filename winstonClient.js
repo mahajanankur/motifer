@@ -8,6 +8,7 @@ const REQUEST_ID = "requestId";
 const DailyRotateFile = require('winston-daily-rotate-file');
 
 const loggingLevels = {
+    sualert: -5,
     crawlalert: -4,
     usersessionactivity: -3,
     crawlerror: -2,
@@ -43,7 +44,7 @@ const customFormat = printf(info => {
             if(info.level === 'usersessionactivity'){
                 return `${info.timestamp} [service] [${requestId ? requestId : null}] [${info.label}] [${info.level.toUpperCase()}] ${info.message}`;
             }
-            if(info.level === 'crawlalert'){
+            if(info.level === 'crawlalert' || info.level === 'sualert'){
                 return `${info.timestamp} [service] [${info.label}] [${info.level.toUpperCase()}] [${info.filename}] ${info.message}`;
             }
             return `${info.timestamp} [service] [${requestId ? requestId : null}] [${info.label}] [${info.level.toUpperCase()}] [${info.filename}] ${info.message}`;
@@ -57,7 +58,7 @@ const customFormat = printf(info => {
             if(info.level === 'usersessionactivity'){
                 return `${info.timestamp} [service] [${requestId ? requestId : null}] [${info.label}] [${info.level.toUpperCase()}] ${info.message}`;
             }
-            if(info.level === 'crawlalert'){
+            if(info.level === 'crawlalert' || info.level === 'sualert'){
                 return `${info.timestamp} [service] [${info.label}] [${info.level.toUpperCase()}] [${info.filename}] ${info.message}`;
             }
             return `${info.timestamp} [${info.filename}] [${info.label}] [${info.level.toUpperCase()}] [${info.filename}] ${info.message}`;
