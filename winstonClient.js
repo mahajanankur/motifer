@@ -8,12 +8,12 @@ const REQUEST_ID = "requestId";
 const DailyRotateFile = require('winston-daily-rotate-file');
 
 const loggingLevels = {
-    sualert: -5,
-    crawlalert: -4,
-    usersessionactivity: -3,
-    crawlerror: -2,
-    crawlui: -2,
-    crawlinfo: -1,
+    crawlerror: -5,
+    crawlui: -5,
+    crawlinfo: -4,
+    sualert: -3,
+    crawlalert: -2,
+    usersessionactivity: -1,
     error: 0,
     warn: 1,
     info: 2,
@@ -35,30 +35,30 @@ const customFormat = printf(info => {
     } else {
         if (info.isExpress) {
             // [${info.args ? JSON.stringify(info.args) : null}]
-            if(['crawlerror', 'crawlinfo'].includes(info.level)){
+            if (['crawlerror', 'crawlinfo'].includes(info.level)) {
                 return `${info.timestamp} [${maskedLevels[info.level]}] ${info.message}`;
             }
-            if(info.level === 'crawlui'){
+            if (info.level === 'crawlui') {
                 return `${info.message}`;
             }
-            if(info.level === 'usersessionactivity'){
+            if (info.level === 'usersessionactivity') {
                 return `${info.timestamp} [service] [${requestId ? requestId : null}] [${info.label}] [${info.level.toUpperCase()}] ${info.message}`;
             }
-            if(info.level === 'crawlalert' || info.level === 'sualert'){
+            if (info.level === 'crawlalert' || info.level === 'sualert') {
                 return `${info.timestamp} [service] [${info.label}] [${info.level.toUpperCase()}] [${info.filename}] ${info.message}`;
             }
             return `${info.timestamp} [service] [${requestId ? requestId : null}] [${info.label}] [${info.level.toUpperCase()}] [${info.filename}] ${info.message}`;
         } else {
-            if(['crawlerror', 'crawlinfo'].includes(info.level)){
+            if (['crawlerror', 'crawlinfo'].includes(info.level)) {
                 return `${info.timestamp} [${maskedLevels[info.level]}] ${info.message}`;
             }
-            if(info.level === 'crawlui'){
+            if (info.level === 'crawlui') {
                 return `${info.message}`;
             }
-            if(info.level === 'usersessionactivity'){
+            if (info.level === 'usersessionactivity') {
                 return `${info.timestamp} [service] [${requestId ? requestId : null}] [${info.label}] [${info.level.toUpperCase()}] ${info.message}`;
             }
-            if(info.level === 'crawlalert' || info.level === 'sualert'){
+            if (info.level === 'crawlalert' || info.level === 'sualert') {
                 return `${info.timestamp} [service] [${info.label}] [${info.level.toUpperCase()}] [${info.filename}] ${info.message}`;
             }
             return `${info.timestamp} [${info.filename}] [${info.label}] [${info.level.toUpperCase()}] [${info.filename}] ${info.message}`;
@@ -109,15 +109,16 @@ const buildTransports = (level, options) => {
             logLevel = verifyLogLevel(element.level);
             // check if rotation is enabled
             if (element.rotate) {
-                transporters.push(fileRotation(element));
+                let transport = fileRotation(element);
+                transporters.push(transport);
             } else {
                 let path = element.filename;
                 if (element.dirname) {
                     path = element.dirname + "/" + element.filename;
                 }
-                transporters.push(new transports.File({ filename: path, level: logLevel }));
+                let transport = new transports.File({ filename: path, level: logLevel });
+                transporters.push(transport);
             }
-
         });
     } else if (options && !(options instanceof Array)) {
         throw new Error("Options should be an array.");
@@ -129,7 +130,7 @@ const verifyLogLevel = (level) => {
     let logLevel = defaultLevel;
     if (level) {
         level = level.toLowerCase();
-        logLevel = loggingLevels[level] || level == 'error'  ? level : defaultLevel;
+        logLevel = loggingLevels[level] || level == 'error' ? level : defaultLevel;
     }
     return logLevel;
 }
