@@ -6,16 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Versioning Scheme
 
-Motifer uses **date-based versioning** in the format `YY.MM.S`:
+Motifer uses **date-based versioning** in the format `YY.M.S`:
 - **YY**: Last two digits of the year (e.g., 25 for 2025)
-- **MM**: Month (01-12)
+- **M**: Month (1-12, no leading zeros - npm compatible)
 - **S**: Sequence number for releases in that month (1, 2, 3, ...)
 
 **Examples:**
-- `25.01.1` - First release in January 2025
-- `25.01.2` - Second release in January 2025
-- `25.02.1` - First release in February 2025
-- `26.01.1` - First release in January 2026
+- `25.1.1` - First release in January 2025
+- `25.1.2` - Second release in January 2025
+- `25.2.1` - First release in February 2025
+- `26.1.1` - First release in January 2026
 
 ## [Unreleased]
 
@@ -25,19 +25,20 @@ Motifer uses **date-based versioning** in the format `YY.MM.S`:
 - Performance optimizations
 - Additional log transports
 
-## [25.01.1] - 2025-01-XX
+## [25.1.1] - 2025-01-XX
 
 ### Changed
-- **Versioning Scheme Update**: Switched from semantic versioning to date-based versioning (YY.MM.S format)
+- **Versioning Scheme Update**: Switched from semantic versioning to date-based versioning (YY.M.S format)
 - Enhanced documentation with new versioning scheme
 - Updated all documentation to reflect new version format
+- Version format adjusted to be npm-compatible (no leading zeros in month)
 
 ### Migration Note
-This release introduces the new date-based versioning scheme. Previous versions used semantic versioning (2.0.7, 2.0.6, etc.). Going forward, all releases will follow the YY.MM.S format.
+This release introduces the new date-based versioning scheme. Previous versions used semantic versioning (2.0.7, 2.0.6, etc.). Going forward, all releases will follow the YY.M.S format (npm-compatible, no leading zeros).
 
 ---
 
-## Historical Versions (Pre-25.01.1)
+## Historical Versions (Pre-25.1.1)
 
 The following versions used semantic versioning before the switch to date-based versioning:
 
@@ -209,14 +210,14 @@ The following versions used semantic versioning before the switch to date-based 
 
 ### Current Versioning (Date-Based)
 
-Starting from **25.01.1**, Motifer uses date-based versioning:
-- **Format**: `YY.MM.S` (Year.Month.Sequence)
-- **Example**: `25.01.1` = First release in January 2025
+Starting from **25.1.1**, Motifer uses date-based versioning:
+- **Format**: `YY.M.S` (Year.Month.Sequence, npm-compatible - no leading zeros)
+- **Example**: `25.1.1` = First release in January 2025
 - **Benefits**: Easy to identify when a version was released, clear chronological ordering
 
 ### Historical Versions (Semantic Versioning)
 
-Previous versions (before 25.01.1) used semantic versioning:
+Previous versions (before 25.1.1) used semantic versioning:
 - **v2.0.0+**: Node.js 20 support and enhanced features
 - **v1.3.0+**: Microservice request ID chaining
 - **v1.2.0+**: Multiple file appenders and APM support
@@ -224,7 +225,7 @@ Previous versions (before 25.01.1) used semantic versioning:
 
 ### Key Milestones
 
-- **25.01.1**: Versioning scheme change to date-based format
+- **25.1.1**: Versioning scheme change to date-based format (npm-compatible)
 - **2.0.0**: Node.js 20 support
 - **1.3.0**: Microservice request ID chaining
 - **1.2.3**: Elastic APM integration

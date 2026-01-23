@@ -32,7 +32,7 @@ If applicable, add screenshots to help explain your problem.
 ## 🔧 Environment
 
 - **Node.js version**: [e.g. 16.14.0]
-- **Motifer version**: [e.g. 25.01.1]
+- **Motifer version**: [e.g. 25.1.1]
 - **Operating System**: [e.g. macOS 12.0, Ubuntu 20.04, Windows 10]
 - **Express version** (if applicable): [e.g. 4.18.0]
 - **Other dependencies**: [List any relevant dependencies]

@@ -70,7 +70,7 @@ If you want automated npm publishing:
 
 3. Create a release:
    - Go to **Releases** → **Create a new release**
-   - Tag: `v25.01.2` (or your version in YY.MM.S format)
+   - Tag: `v25.1.2` (or your version in YY.M.S format)
    - The workflow will automatically publish to npm!
 
 ## 📊 What You'll See

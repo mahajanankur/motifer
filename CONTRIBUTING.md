@@ -350,7 +350,7 @@ A clear and concise description of what you expected to happen.
 
 **Environment:**
 - Node.js version: [e.g. 16.14.0]
-- Motifer version: [e.g. 25.01.1]
+- Motifer version: [e.g. 25.1.1]
 - OS: [e.g. macOS 12.0]
 - Express version: [e.g. 4.18.0] (if applicable)
 

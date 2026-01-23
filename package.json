@@ -1,6 +1,6 @@
 {
   "name": "motifer",
-  "version": "25.01.1",
+  "version": "25.1.1",
   "description": "Production-ready structured logging for Node.js & Express with automatic request ID tracking, log rotation, and Logstash compatibility",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:mahajanankur/motifer.git"
+    "url": "git+ssh://git@github.com/mahajanankur/motifer.git"
   },
   "keywords": [
     "logger",

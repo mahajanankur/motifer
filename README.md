@@ -103,15 +103,15 @@ logger.error('Something went wrong', error);
 
 ## 📅 Versioning
 
-Motifer uses **date-based versioning** in the format `YY.MM.S`:
+Motifer uses **date-based versioning** in the format `YY.M.S`:
 - **YY**: Last two digits of the year (e.g., 25 for 2025)
-- **MM**: Month (01-12)
+- **M**: Month (1-12, no leading zeros)
 - **S**: Sequence number for releases in that month (1, 2, 3, ...)
 
 **Examples:**
-- `25.01.1` - First release in January 2025
-- `25.01.2` - Second release in January 2025
-- `25.02.1` - First release in February 2025
+- `25.1.1` - First release in January 2025
+- `25.1.2` - Second release in January 2025
+- `25.2.1` - First release in February 2025
 
 This makes it easy to identify when a version was released and ensures chronological ordering. For detailed version history, see [CHANGELOG.md](CHANGELOG.md).
 

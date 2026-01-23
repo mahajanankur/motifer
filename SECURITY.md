@@ -6,10 +6,10 @@ We actively support and provide security updates for the following versions:
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 25.01.x | :white_check_mark: |
-| < 25.01 | :x:                |
+| 25.1.x  | :white_check_mark: |
+| < 25.1  | :x:                |
 
-**Note**: Motifer uses date-based versioning (YY.MM.S format). Versions 25.01.x and later are actively supported. Previous versions using semantic versioning (2.0.x, 1.x.x) are no longer supported.
+**Note**: Motifer uses date-based versioning (YY.M.S format, npm-compatible). Versions 25.1.x and later are actively supported. Previous versions using semantic versioning (2.0.x, 1.x.x) are no longer supported.
 
 ## Reporting a Vulnerability
 
@@ -78,9 +78,9 @@ We regularly audit and update dependencies. Known vulnerabilities in dependencie
 
 ## Security Updates
 
-Security updates are released using date-based versioning (YY.MM.S format):
-- **Same month**: Increment sequence number (e.g., 25.01.1 → 25.01.2) for critical fixes
-- **New month**: New version with sequence 1 (e.g., 25.01.x → 25.02.1) for security enhancements
+Security updates are released using date-based versioning (YY.M.S format):
+- **Same month**: Increment sequence number (e.g., 25.1.1 → 25.1.2) for critical fixes
+- **New month**: New version with sequence 1 (e.g., 25.1.x → 25.2.1) for security enhancements
 
 ## Security Checklist
 
