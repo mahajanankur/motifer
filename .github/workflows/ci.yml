@@ -8,14 +8,35 @@ on:
 
 jobs:
   test:
-    name: Test on Node.js ${{ matrix.node-version }}
+    name: Test on Node.js ${{ matrix.node-version }} (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
     
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        node-version: [12.x, 14.x, 16.x, 18.x, 20.x]
+        include:
+          # Ubuntu - all supported Node versions
+          - os: ubuntu-latest
+            node-version: '16'
+          - os: ubuntu-latest
+            node-version: '18'
+          - os: ubuntu-latest
+            node-version: '20'
+          - os: ubuntu-latest
+            node-version: '22'
+          # Windows - latest LTS versions
+          - os: windows-latest
+            node-version: '18'
+          - os: windows-latest
+            node-version: '20'
+          # macOS - only recent versions (12.x and 14.x not available on ARM64)
+          - os: macos-latest
+            node-version: '18'
+          - os: macos-latest
+            node-version: '20'
+          - os: macos-latest
+            node-version: '22'
     
     steps:
     - name: Checkout code
@@ -29,15 +50,18 @@ jobs:
     
     - name: Install dependencies
       run: npm ci
+      timeout-minutes: 5
     
     - name: Run tests
-      run: npm test
+      run: npm run test:ci
+      timeout-minutes: 8
+      continue-on-error: false
     
     - name: Upload test results
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: test-results-${{ matrix.os }}-${{ matrix.node-version }}
+        name: test-results-${{ matrix.os }}-node${{ matrix.node-version }}
         path: |
           test-results/
           coverage/

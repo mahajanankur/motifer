@@ -574,3 +574,13 @@ describe('Express Integration Tests', () => {
         });
     });
 });
+
+// Global after hook to ensure all resources are cleaned up
+after(function(done) {
+    // Give time for any pending async operations to complete
+    // The individual afterEach hooks should handle cleanup
+    // This is just a safety net
+    setTimeout(() => {
+        done();
+    }, 100);
+});

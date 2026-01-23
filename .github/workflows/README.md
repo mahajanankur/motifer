@@ -8,8 +8,9 @@ This directory contains GitHub Actions workflows for continuous integration, sec
 **Triggers:** Push and Pull Requests to `master`, `main`, and `develop` branches
 
 **What it does:**
-- Runs tests on multiple Node.js versions (12.x, 14.x, 16.x, 18.x, 20.x)
+- Runs tests on multiple Node.js versions (16, 18, 20, 22)
 - Tests on multiple operating systems (Ubuntu, Windows, macOS)
+- Note: Node.js 12.x and 14.x are EOL and excluded from CI (not available on ARM64)
 - Verifies package can be built and packed
 - Performs basic code quality checks
 

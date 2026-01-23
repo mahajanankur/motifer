@@ -5,8 +5,9 @@
 I've created comprehensive GitHub Actions workflows for your Motifer project:
 
 ### 1. **CI Workflow** (`ci.yml`)
-- ✅ Runs tests on **5 Node.js versions** (12.x, 14.x, 16.x, 18.x, 20.x)
+- ✅ Runs tests on **Node.js versions** (16, 18, 20, 22)
 - ✅ Tests on **3 operating systems** (Ubuntu, Windows, macOS)
+- ✅ Note: Node.js 12.x and 14.x are EOL and not available on ARM64, so they're excluded from CI
 - ✅ Verifies package can be built and packed
 - ✅ Basic code quality checks
 - ✅ **Status badge** added to README
@@ -174,7 +175,9 @@ Create `.prettierrc`:
 
 Edit `.github/workflows/ci.yml`:
 ```yaml
-node-version: [14.x, 16.x, 18.x, 20.x]  # Remove 12.x if needed
+# Current: [16, 18, 20, 22]
+# Note: Node.js 12.x and 14.x are EOL and not available on ARM64
+node-version: [18, 20, 22]  # Example: only test on LTS versions
 ```
 
 ### Change Test Command

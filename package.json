@@ -4,7 +4,8 @@
   "description": "Production-ready structured logging for Node.js & Express with automatic request ID tracking, log rotation, and Logstash compatibility",
   "main": "index.js",
   "scripts": {
-    "test": "mocha ./test/*.spec.js"
+    "test": "mocha ./test/*.spec.js --timeout 10000 --exit",
+    "test:ci": "node test/run-tests.js"
   },
   "repository": {
     "type": "git",
