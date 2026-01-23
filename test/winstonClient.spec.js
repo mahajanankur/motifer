@@ -17,9 +17,14 @@ describe('winstonClient', () => {
         // Clean up test log files
         if (fs.existsSync(testLogDir)) {
             fs.readdirSync(testLogDir).forEach(file => {
-                fs.unlinkSync(path.join(testLogDir, file));
+                const filePath = path.join(testLogDir, file);
+                if (fs.statSync(filePath).isDirectory()) {
+                    fs.rmSync(filePath, { recursive: true, force: true });
+                } else {
+                    fs.unlinkSync(filePath);
+                }
             });
-            fs.rmdirSync(testLogDir);
+            fs.rmSync(testLogDir, { recursive: true, force: true });
         }
     });
 

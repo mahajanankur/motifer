@@ -1,0 +1,40 @@
+# Test files
+test/
+*.spec.js
+
+# Examples
+examples/
+
+# Documentation (available on GitHub)
+*.md
+!README.md
+
+# GitHub specific
+.github/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+logs/
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Config files not needed in production
+logstash.config
+
+# npm pack output
+*.tgz
+
+# Lock files (use package.json versions)
+package-lock.json

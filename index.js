@@ -117,7 +117,7 @@ const LoggerFactory = function (service, level, options) {
     if (!service) {
         throw new Error("Service name is required.");
     }
-    if (level && !validLogLevels.includes(level)) {
+    if (level && !validLogLevels.includes(level.toLowerCase())) {
         throw new Error(`Invalid log level: ${level}. Supported levels are ${validLogLevels}`);
     }
 
@@ -128,7 +128,11 @@ const LoggerFactory = function (service, level, options) {
     logger = winstonLoggerClient(level, options);
     return {
         getLogger: (filename) => {
-            filename = filename.replace(/^.*[\\\/]/, '');
+            if (filename) {
+                filename = filename.replace(/^.*[\\\/]/, '');
+            } else {
+                filename = 'unknown';
+            }
             return new LoggerBuilder(filename);
         }
     }
@@ -148,7 +152,7 @@ const ExpressLoggerFactory = function (service, level, express = null, options) 
     if (!service) {
         throw new Error("Service name is required.");
     }
-    if (level && !validLogLevels.includes(level)) {
+    if (level && !validLogLevels.includes(level.toLowerCase())) {
         throw new Error(`Invalid log level: ${level}. Supported levels are ${validLogLevels}`);
     }
 
@@ -195,7 +199,11 @@ const ExpressLoggerFactory = function (service, level, express = null, options) 
     // }
     return {
         getLogger: (filename) => {
-            filename = filename.replace(/^.*[\\\/]/, '');
+            if (filename) {
+                filename = filename.replace(/^.*[\\\/]/, '');
+            } else {
+                filename = 'unknown';
+            }
             return new LoggerBuilder(filename, true);
         }
     }
@@ -262,7 +270,11 @@ class Logger {
      * @returns {LoggerBuilder} LoggerBuilder.
      */
     static getLogger(filename, isExpress) {
-        filename = filename.replace(/^.*[\\\/]/, '');
+        if (filename) {
+            filename = filename.replace(/^.*[\\\/]/, '');
+        } else {
+            filename = 'unknown';
+        }
         return new LoggerBuilder(filename, (isExpress != undefined && typeof isExpress === "boolean") ? isExpress : IS_EXPRESS);
     }
 }

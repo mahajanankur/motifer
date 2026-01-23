@@ -116,8 +116,13 @@ const buildTransports = (level, options) => {
                 if (element.dirname) {
                     path = element.dirname + "/" + element.filename;
                 }
-                let transport = new transports.File({ filename: path, level: logLevel });
-                transporters.push(transport);
+                try {
+                    let transport = new transports.File({ filename: path, level: logLevel });
+                    transporters.push(transport);
+                } catch (error) {
+                    // If file path is invalid, log warning but continue with console transport only
+                    console.warn(`Warning: Could not create file transport for ${path}: ${error.message}`);
+                }
             }
         });
     } else if (options && !(options instanceof Array)) {

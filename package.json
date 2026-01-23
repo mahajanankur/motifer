@@ -1,7 +1,7 @@
 {
   "name": "motifer",
-  "version": "2.0.7",
-  "description": "Generic logs pattern manager for express, built on top of winston.",
+  "version": "25.01.1",
+  "description": "Production-ready structured logging for Node.js & Express with automatic request ID tracking, log rotation, and Logstash compatibility",
   "main": "index.js",
   "scripts": {
     "test": "mocha ./test/*.spec.js"
@@ -12,24 +12,52 @@
   },
   "keywords": [
     "logger",
+    "logging",
+    "structured-logging",
     "winston",
-    "log pattern",
-    "express logger",
     "express",
-    "request identifier"
+    "express-middleware",
+    "express-logger",
+    "log-pattern",
+    "request-id",
+    "request-tracing",
+    "distributed-tracing",
+    "microservices",
+    "observability",
+    "apm",
+    "application-performance-monitoring",
+    "logstash",
+    "elasticsearch",
+    "cloudtrail",
+    "log-rotation",
+    "file-rotation",
+    "production-logging",
+    "enterprise-logging",
+    "nodejs",
+    "node",
+    "middleware",
+    "request-logging",
+    "response-logging",
+    "uuid",
+    "trace-id",
+    "correlation-id"
   ],
   "author": "Ankur Mahajan",
   "license": "Apache License 2.0",
   "dependencies": {
-    "chai": "^4.3.7",
-    "elastic-apm-node": "^4.3.0",
+    "elastic-apm-node": "^4.15.0",
     "express-http-context": "^1.2.4",
-    "joi": "^17.6.0",
-    "mocha": "^10.2.0",
-    "morgan": "^1.10.0",
+    "joi": "^17.13.3",
+    "morgan": "^1.10.1",
     "util": "^0.12.3",
-    "uuid": "^8.3.0",
-    "winston": "3.3.3",
-    "winston-daily-rotate-file": "4.5.0"
+    "uuid": "^8.3.2",
+    "winston": "^3.19.0",
+    "winston-daily-rotate-file": "^4.5.0"
+  },
+  "devDependencies": {
+    "body-parser": "^1.20.4",
+    "chai": "^4.3.7",
+    "express": "^4.22.1",
+    "mocha": "^10.8.2"
   }
 }
