@@ -109,9 +109,9 @@ Motifer uses **date-based versioning** in the format `YY.M.S`:
 - **S**: Sequence number for releases in that month (1, 2, 3, ...)
 
 **Examples:**
-- `25.1.1` - First release in January 2025
-- `25.1.2` - Second release in January 2025
-- `25.2.1` - First release in February 2025
+- `26.1.1` - First release in January 2026
+- `26.1.2` - Second release in January 2026
+- `26.2.1` - First release in February 2026
 
 This makes it easy to identify when a version was released and ensures chronological ordering. For detailed version history, see [CHANGELOG.md](CHANGELOG.md).
 

@@ -59,7 +59,7 @@ echo "📦 Package Information:"
 npm pack --dry-run 2>&1 | grep -E "(name|version|package size)" | head -3
 
 echo ""
-read -p "Ready to publish motifer@25.1.1 to npm? (y/n) " -n 1 -r
+read -p "Ready to publish motifer@26.1.1 to npm? (y/n) " -n 1 -r
 echo
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     echo "Publish cancelled."
