@@ -6,9 +6,11 @@ const { ExpressLoggerFactory, LoggerFactory, Logger, ApmFactory } = require('../
 const { winstonLoggerClient } = require('../winstonClient');
 const fs = require('fs');
 const path = require('path');
+const { safeRemoveDir, closeLogger } = require('./cleanup-helper');
 
 describe('Complete Functionality Tests - README Coverage', () => {
     const testLogDir = path.join(__dirname, 'test-logs');
+    const loggerInstances = [];
 
     beforeEach(() => {
         if (!fs.existsSync(testLogDir)) {
@@ -16,22 +18,24 @@ describe('Complete Functionality Tests - README Coverage', () => {
         }
     });
 
-    afterEach(() => {
-        if (fs.existsSync(testLogDir)) {
+    afterEach((done) => {
+        // Close all tracked logger instances first to release file handles
+        loggerInstances.forEach(logger => {
+            closeLogger(logger);
+        });
+        loggerInstances.length = 0;
+
+        // Minimal delay for cleanup - files will be cleaned up on process exit if locked
+        setTimeout(() => {
             try {
-                fs.readdirSync(testLogDir).forEach(file => {
-                    const filePath = path.join(testLogDir, file);
-                    if (fs.statSync(filePath).isDirectory()) {
-                        fs.rmSync(filePath, { recursive: true, force: true });
-                    } else {
-                        fs.unlinkSync(filePath);
-                    }
-                });
-                fs.rmSync(testLogDir, { recursive: true, force: true });
+                if (fs.existsSync(testLogDir)) {
+                    safeRemoveDir(testLogDir, 2, 100); // Reduced retries and delay
+                }
             } catch (err) {
-                // Ignore cleanup errors
+                // Ignore cleanup errors - they shouldn't fail tests
             }
-        }
+            done();
+        }, 50); // Minimal delay - optimized for CI speed
     });
 
     describe('README - Basic Usage (Express)', () => {

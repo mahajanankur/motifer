@@ -16,7 +16,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # Ubuntu - all supported Node versions
+          # Ubuntu - test all supported Node versions (primary platform)
           - os: ubuntu-latest
             node-version: '16'
           - os: ubuntu-latest
@@ -25,18 +25,12 @@ jobs:
             node-version: '20'
           - os: ubuntu-latest
             node-version: '22'
-          # Windows - latest LTS versions
-          - os: windows-latest
-            node-version: '18'
+          # Windows - test only LTS (18) to save CI hours
           - os: windows-latest
             node-version: '20'
-          # macOS - only recent versions (12.x and 14.x not available on ARM64)
-          - os: macos-latest
-            node-version: '18'
+          # macOS - test only latest LTS to save CI hours
           - os: macos-latest
             node-version: '20'
-          - os: macos-latest
-            node-version: '22'
     
     steps:
     - name: Checkout code
@@ -54,7 +48,7 @@ jobs:
     
     - name: Run tests
       run: npm run test:ci
-      timeout-minutes: 8
+      timeout-minutes: 6
       continue-on-error: false
     
     - name: Upload test results

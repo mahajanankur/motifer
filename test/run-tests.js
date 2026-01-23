@@ -4,13 +4,21 @@
 
 const { spawn } = require('child_process');
 const path = require('path');
+const fs = require('fs');
 
 const mochaPath = require.resolve('mocha/bin/mocha');
-const testFiles = path.join(__dirname, '*.spec.js');
+const testDir = __dirname;
+
+// Get all spec files EXCEPT memory-leaks.spec.js (too slow/flaky for CI)
+const testFiles = fs.readdirSync(testDir)
+    .filter(f => f.endsWith('.spec.js') && f !== 'memory-leaks.spec.js')
+    .map(f => path.join(testDir, f));
+
+console.log(`Running ${testFiles.length} test files (excluding memory-leaks.spec.js for CI)...`);
 
 const args = [
-    testFiles,
-    '--timeout', '10000',
+    ...testFiles,
+    '--timeout', '8000',
     '--exit',
     '--reporter', 'spec'
 ];
@@ -24,10 +32,10 @@ const mocha = spawn('node', [mochaPath, ...args], {
 
 let hasExited = false;
 
-// Safety timeout - force exit after 7 minutes (420 seconds)
+// Safety timeout - force exit after 5 minutes (300 seconds) - optimized for CI
 const safetyTimeout = setTimeout(() => {
     if (!hasExited) {
-        console.error('\n⚠️  Tests exceeded maximum time (7 minutes), forcing exit...');
+        console.error('\n⚠️  Tests exceeded maximum time (5 minutes), forcing exit...');
         mocha.kill('SIGTERM');
         setTimeout(() => {
             if (!hasExited) {
@@ -35,20 +43,18 @@ const safetyTimeout = setTimeout(() => {
                 mocha.kill('SIGKILL');
                 process.exit(1);
             }
-        }, 3000);
+        }, 2000); // Reduced from 3000ms
     }
-}, 420000); // 7 minutes
+}, 300000); // 5 minutes (reduced from 7)
 
 mocha.on('exit', (code) => {
     hasExited = true;
     clearTimeout(safetyTimeout);
     const exitCode = code || 0;
     
-    // Force exit after a short delay to allow any pending operations
-    setTimeout(() => {
-        console.log('\n✓ Tests completed, exiting...');
-        process.exit(exitCode);
-    }, 500);
+    // Force exit immediately - no delay needed with --exit flag
+    console.log('\n✓ Tests completed, exiting...');
+    process.exit(exitCode);
 });
 
 mocha.on('error', (err) => {

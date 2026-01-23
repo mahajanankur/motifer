@@ -98,7 +98,7 @@ describe('Express Integration Tests', () => {
                             } catch (err) {
                                 done(err);
                             }
-                        }, 200);
+                        }, 50);
                     });
                 });
 
@@ -142,7 +142,7 @@ describe('Express Integration Tests', () => {
                             } catch (err) {
                                 done(err);
                             }
-                        }, 200);
+                        }, 50);
                     });
                 });
 
@@ -294,7 +294,7 @@ describe('Express Integration Tests', () => {
                             } catch (err) {
                                 done(err);
                             }
-                        }, 200);
+                        }, 50);
                     });
                 }).on('error', done);
             });
@@ -324,7 +324,7 @@ describe('Express Integration Tests', () => {
                             } catch (err) {
                                 done(err);
                             }
-                        }, 200);
+                        }, 50);
                     });
                 }).on('error', done);
             });
@@ -364,7 +364,7 @@ describe('Express Integration Tests', () => {
                             } catch (err) {
                                 done(err);
                             }
-                        }, 200);
+                        }, 50);
                     });
                 });
 
@@ -413,7 +413,7 @@ describe('Express Integration Tests', () => {
                             } catch (err) {
                                 done(err);
                             }
-                        }, 200);
+                        }, 50);
                     });
                 }).on('error', done);
             });
@@ -451,7 +451,7 @@ describe('Express Integration Tests', () => {
                             } catch (err) {
                                 done(err);
                             }
-                        }, 200);
+                        }, 50);
                     });
                 }).on('error', done);
             });
@@ -489,7 +489,7 @@ describe('Express Integration Tests', () => {
                             } catch (err) {
                                 done(err);
                             }
-                        }, 200);
+                        }, 50);
                     });
                 }).on('error', done);
             });
@@ -521,7 +521,7 @@ describe('Express Integration Tests', () => {
                             } catch (err) {
                                 done(err);
                             }
-                        }, 200);
+                        }, 50);
                     });
                 }).on('error', done);
             });
@@ -564,7 +564,7 @@ describe('Express Integration Tests', () => {
                                     setTimeout(() => {
                                         expect(loggedIds).to.have.members(requestIds);
                                         done();
-                                    }, 300);
+                                    }, 50);
                                 }
                             });
                         }).on('error', done);
@@ -577,10 +577,7 @@ describe('Express Integration Tests', () => {
 
 // Global after hook to ensure all resources are cleaned up
 after(function(done) {
-    // Give time for any pending async operations to complete
-    // The individual afterEach hooks should handle cleanup
+    // Minimal delay - individual afterEach hooks handle cleanup
     // This is just a safety net
-    setTimeout(() => {
-        done();
-    }, 100);
+    setImmediate(done); // Use setImmediate instead of setTimeout for faster execution
 });
